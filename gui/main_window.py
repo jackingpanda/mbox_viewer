@@ -134,9 +134,9 @@ class MainWindow(QMainWindow):
         self._batch_extract_act.setEnabled(False)
         export_menu.addAction(self._batch_extract_act)
 
-        self._media_analyzer_act = QAction("📊 Storage & Media Analyzer (WizTree)...", self)
+        self._media_analyzer_act = QAction("📊 Storage & Media Analyzer...", self)
         self._media_analyzer_act.setShortcut("Ctrl+W")
-        self._media_analyzer_act.setToolTip("Analisis penyimpanan media mbox seperti WizTree (terbesar ke terkecil)")
+        self._media_analyzer_act.setToolTip("Analisis penyimpanan media: urutkan semua file dari terbesar ke terkecil")
         self._media_analyzer_act.triggered.connect(self._on_show_media_analyzer)
         self._media_analyzer_act.setEnabled(False)
         export_menu.addAction(self._media_analyzer_act)
@@ -205,7 +205,7 @@ class MainWindow(QMainWindow):
         tb.addAction(self._tb_batch_extract)
 
         self._tb_analyzer = QAction("📊 Media Analyzer", self)
-        self._tb_analyzer.setToolTip("MBOX Storage & Media Analyzer (WizTree View)  (Ctrl+W)")
+        self._tb_analyzer.setToolTip("MBOX Storage & Media Analyzer (Urutkan File Terbesar ke Terkecil)  (Ctrl+W)")
         self._tb_analyzer.setEnabled(False)
         self._tb_analyzer.triggered.connect(self._on_show_media_analyzer)
         tb.addAction(self._tb_analyzer)
@@ -431,15 +431,15 @@ class MainWindow(QMainWindow):
         g_layout.setContentsMargins(0, 0, 0, 0)
         g_layout.setSpacing(14)
 
-        # Card 3: WizTree Analyzer
+        # Card 3: Storage & Media Analyzer
         c3 = QFrame()
         c3.setProperty("class", "WelcomeCard")
         c3_layout = QVBoxLayout(c3)
         c3_layout.setContentsMargins(18, 16, 18, 16)
         c3_layout.setSpacing(8)
-        c3_title = QLabel("📊 [3] WizTree Media Analyzer")
+        c3_title = QLabel("📊 [3] Storage & Media Analyzer")
         c3_title.setStyleSheet("font-size: 11pt; font-weight: bold;")
-        c3_desc = QLabel("Urutkan file dari terbesar ke terkecil. Filter Video, Gambar, Dokumen, Zip.")
+        c3_desc = QLabel("Urutkan semua file dari terbesar ke terkecil, visualisasi batang kategori, dan filter media (Video, Foto, Dokumen, Zip).")
         c3_desc.setStyleSheet("font-size: 9pt; color: #94a3b8;")
         c3_desc.setWordWrap(True)
         c3_btn = QPushButton("Buka Media Analyzer")
@@ -997,7 +997,7 @@ class MainWindow(QMainWindow):
             self._status_label.setText(f"Theme: {new_theme.capitalize()}")
 
     def _on_show_media_analyzer(self):
-        """Open the WizTree-style MBOX Media and Storage Analyzer Dialog."""
+        """Open the MBOX Storage & Media Analyzer Dialog (ranking files largest to smallest)."""
         if not self._all_records and not self._parser.filepath:
             QMessageBox.information(
                 self,
@@ -1045,7 +1045,8 @@ class MainWindow(QMainWindow):
             f"<hr>"
             f"<p style='color: #8fa0c0; font-size: 9pt;'>"
             f"Built with Python 3 & PySide6 (Qt 6).<br>"
-            f"Features 64-bit streaming binary engine, WizTree Storage & Media Analyzer, "
+            f"Features 64-bit streaming binary engine, Storage & Media Analyzer "
+            f"(visual ranking of files from largest to smallest, interactive category breakdown, and instant extraction), "
             f"and multi-threaded batch extractor.</p>",
         )
 

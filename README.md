@@ -23,7 +23,7 @@
 |---------|-------------|
 | 📂 **Open MBOX** | Open any `.mbox` file via file dialog, drag-and-drop, or CLI argument |
 | ⚡ **64-bit Streaming Engine** | Instant zero-RAM indexing (< 0.05s on reopen); smoothly handles 9GB+ archives |
-| 🌳 **WizTree Media Analyzer** | Interactive storage analyzer (`Ctrl+W`): ranks all attachments from largest to smallest, category distribution bar (Video, Image, Archive, Document, Audio), filter pills, preview & default app launcher |
+| 📊 **Storage & Media Analyzer** | Interactive storage analyzer (`Ctrl+W`): ranks all attachments from largest to smallest, category distribution bar (Video, Image, Archive, Document, Audio), filter pills, preview & default app launcher |
 | ⚡ **Batch Extractor** | Dedicated multi-threaded extractor (`Ctrl+Shift+E`): filter by file extensions (PDF, Images, Zip, etc.), organized subfolders, duplicate renaming, and live speed counters |
 | 📋 **Virtual Email Table** | High-performance table with From, Subject, Date, Gmail Labels, and Attachment indicator |
 | 👁️ **Email Viewer** | Multi-view reader: Rendered HTML (sandboxed), Plain Text, and Raw Headers |
@@ -74,7 +74,7 @@ python main.py "D:\path\to\archive.mbox"
 | Shortcut | Action |
 |----------|--------|
 | `Ctrl+O` | Open MBOX file |
-| `Ctrl+W` | Open WizTree Storage & Media Analyzer |
+| `Ctrl+W` | Open Storage & Media Analyzer (Urutkan File Terbesar ke Terkecil) |
 | `Ctrl+Shift+E` | Open Batch Attachment Extractor |
 | `Ctrl+I` | Open Statistics Dashboard |
 | `Ctrl+Shift+T` | Toggle Dark / Light Theme |
@@ -137,13 +137,13 @@ mbox_viewer/
 │   ├── email_model.py           # EmailRecord & AttachmentInfo dataclasses
 │   ├── mbox_parser.py           # 64-bit streaming parser & binary indexer
 │   ├── search_engine.py         # Multi-field filter & analytics aggregators
-│   ├── media_model.py           # MediaItem & MediaStats untuk WizTree
-│   ├── media_analyzer.py        # WizTree scanner, ranking & single extractor
+│   ├── media_model.py           # MediaItem & MediaStats untuk analisis media & storage
+│   ├── media_analyzer.py        # Scanner, size ranking & single extractor
 │   └── exporter.py              # Export .eml & batch attachment extraction
 │
 ├── gui/                         # Antarmuka Desktop (PySide6 / Qt 6)
 │   ├── main_window.py           # Window utama & orkestrator sistem
-│   ├── media_analyzer_dialog.py # Dialog WizTree Storage & Media Analyzer
+│   ├── media_analyzer_dialog.py # Dialog Storage & Media Analyzer
 │   ├── batch_extract_dialog.py  # Dialog multi-threaded Batch Extractor
 │   ├── email_list_widget.py     # Tabel virtual emails (QAbstractTableModel)
 │   ├── email_viewer.py          # Reader HTML/Plain Text/Raw Headers
@@ -158,7 +158,7 @@ mbox_viewer/
 │   ├── parse_worker.py          # Streaming background indexer
 │   ├── body_worker.py           # Lazy loader konten email
 │   ├── search_worker.py         # Background query filter
-│   ├── media_worker.py          # WizTree background scanner
+│   ├── media_worker.py          # Media background scanner
 │   └── export_worker.py         # Batch extraction background worker
 │
 └── utils/

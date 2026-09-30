@@ -40,7 +40,7 @@ def _safe_filename(name: str, max_len: int = 120) -> str:
 class MediaAnalyzer:
     """
     Analyzes all attachments/media in an MBOX file.
-    Provides WizTree-style size breakdowns, category distributions,
+    Provides size breakdowns (largest to smallest), category distributions,
     and instantaneous cache-based re-opening.
     """
 
@@ -260,7 +260,7 @@ class MediaAnalyzer:
         return media_items
 
     # ------------------------------------------------------------------
-    # Statistics & Breakdown (WizTree style)
+    # Statistics & Breakdown (size ranking & category distribution)
     # ------------------------------------------------------------------
 
     @classmethod

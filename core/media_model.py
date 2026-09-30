@@ -1,6 +1,6 @@
 """
 core/media_model.py
-Data models and constants for MBOX media analysis and storage breakdown (WizTree style).
+Data models and constants for MBOX media analysis and storage breakdown (largest to smallest).
 Zero GUI dependencies.
 """
 from __future__ import annotations

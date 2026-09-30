@@ -1,6 +1,6 @@
 """
 gui/media_analyzer_dialog.py
-WizTree-style MBOX Media and Storage Analyzer Dialog.
+MBOX Media and Storage Analyzer Dialog (ranking files from largest to smallest).
 Features:
 - Ranked view of all media files from largest to smallest.
 - Interactive multi-color storage distribution bar.
@@ -90,7 +90,7 @@ log = logging.getLogger(__name__)
 
 
 # ---------------------------------------------------------------------------
-# Visual Percentage Bar Delegate (WizTree style in table cells)
+# Visual Percentage Bar Delegate (storage consumption bar in table cells)
 # ---------------------------------------------------------------------------
 
 class PercentageBarDelegate(QStyledItemDelegate):
@@ -131,7 +131,7 @@ class PercentageBarDelegate(QStyledItemDelegate):
 
 
 # ---------------------------------------------------------------------------
-# Storage Distribution Bar Widget (WizTree Treemap / Segment Bar)
+# Storage Distribution Bar Widget (segmented category breakdown bar)
 # ---------------------------------------------------------------------------
 
 class StorageDistributionBar(QWidget):
@@ -448,7 +448,7 @@ class EmailSizeTableModel(QAbstractTableModel):
 
 class MediaAnalyzerDialog(QDialog):
     """
-    Comprehensive WizTree-style MBOX Media and Storage Analyzer.
+    Comprehensive MBOX Media and Storage Analyzer (ranking files from largest to smallest).
     Provides instant visual ranking of files from largest to smallest,
     category breakdowns, live preview, and direct extraction.
     """
@@ -462,7 +462,7 @@ class MediaAnalyzerDialog(QDialog):
         parent=None,
     ):
         super().__init__(parent)
-        self.setWindowTitle("🌳 MBOX Storage & Media Analyzer (WizTree View)")
+        self.setWindowTitle("📊 MBOX Storage & Media Analyzer — Urutkan File Terbesar ke Terkecil")
         self.resize(1240, 780)
         self.setMinimumSize(980, 600)
 

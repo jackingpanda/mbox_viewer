@@ -18,7 +18,7 @@ Format penulisan changelog ini mengacu pada standar [Keep a Changelog](https://k
   - *Breathing Pulse Drop Zone*: Kotak drop-zone berdenyut lembut saat mendeteksi file `.mbox` diseret di atas jendela.
 - **Transisi Antar Layar Mulus (Cross-Fade Stacked Views)**:
   - Transisi antara Welcome Screen dan Workspace (Tabel Email) berganti dengan efek *cross-fade* lembut saat membuka file ataupun saat memilih *Close File*.
-- **WizTree Storage & Media Analyzer Animations**:
+- **Storage & Media Analyzer Animations (Urutkan File Terbesar ke Terkecil)**:
   - *Progressive Segment Fill Animation*: Batang multi-warna konsumsi storage (Video, Image, Archive, Document, dll.) bertumbuh mengalir secara mulus dari 0% ke persentase akhir dengan perlambatan kurva kubik.
   - *Media Inspector Preview Fade-In*: Gambar thumbnail memudar masuk secara halus saat baris file dipilih, mengeliminasi kedip visual kasar.
   - *Smooth Scan Progress*: Progress bar pemindaian media menggunakan interpolasi nilai bergerak mulus.
@@ -50,10 +50,10 @@ Format penulisan changelog ini mengacu pada standar [Keep a Changelog](https://k
 
 ## [1.2.0] — 2026-09-30
 
-### ✨ Added (Fitur Baru: WizTree MBOX Storage & Media Analyzer)
+### ✨ Added (Fitur Baru: MBOX Storage & Media Analyzer — Urutkan File Terbesar ke Terkecil)
 - **Tabel Peringkat File Terbesar ke Terkecil (Ranked Media View)**:
   - Mengurutkan seluruh media dan lampiran dalam file MBOX dari yang paling besar ke paling kecil secara presisi berdasarkan ukuran byte sebenarnya.
-  - Menampilkan visual progress bar mini (`% Total`) di dalam sel tabel, memperlihatkan proporsi konsumsi storage secara visual persis seperti WizTree.
+  - Menampilkan visual progress bar mini (`% Total`) di dalam sel tabel, memperlihatkan proporsi konsumsi storage secara visual secara visual (peringkat ukuran terbesar ke terkecil).
 - **Interactive Storage Distribution Bar (Treemap / Segment Bar)**:
   - Bilah distribusi multi-warna proporsional yang memetakan pemakaian disk per kategori:
     - 🎬 **Video** (Ungu `#8b5cf6`): `.mp4`, `.3gp`, `.mkv`, `.avi`, `.mov`, dll.
@@ -83,8 +83,8 @@ Format penulisan changelog ini mengacu pada standar [Keep a Changelog](https://k
   - Menyimpan metadata media ke disk cache sehingga pembukaan dialog berikutnya berjalan instan (< 0,05 detik).
   - Tersedia tombol **"🔄 Rescan MBOX"** untuk memperbarui indeks kapan saja.
 - **Integrasi Menu & Shortcut**:
-  - Menu `Export` -> `🌳 Storage & Media Analyzer (WizTree)… (Ctrl+W)`.
-  - Menu `View` -> `🌳 Storage & Media Analyzer (WizTree)… (Ctrl+W)`.
+  - Menu `Export` -> `📊 Storage & Media Analyzer… (Ctrl+W)`.
+  - Menu `View` -> `📊 Storage & Media Analyzer… (Ctrl+W)`.
   - Tombol toolbar utama: `🌳 Media Analyzer`.
 
 ## [1.1.3] — 2026-09-30

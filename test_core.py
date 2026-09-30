@@ -185,7 +185,7 @@ check("format_size GB", format_size(1073741824) == "1.0 GB")
 
 
 print()
-print("=== Media Analyzer Tests (WizTree) ===")
+print("=== Media Analyzer Tests (Storage Ranking) ===")
 from core.media_model import MediaItem
 from core.media_analyzer import MediaAnalyzer
 
