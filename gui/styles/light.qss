@@ -283,13 +283,25 @@ QPushButton[categoryPill="true"]:checked {
     border: 1px solid #d4d8e8;
     border-radius: 10px;
 }
+.WelcomeCard:hover {
+    background-color: #f8fafc;
+    border-color: #93c5fd;
+}
 .WelcomeCardPrimary {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #eff6ff, stop:1 #ffffff);
     border: 2px solid #2563eb;
     border-radius: 10px;
 }
+.WelcomeCardPrimary:hover {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #dbeafe, stop:1 #ffffff);
+    border-color: #1d4ed8;
+}
 #DropZoneCard {
     background-color: rgba(239, 246, 255, 0.7);
     border: 2px dashed #3b82f6;
     border-radius: 10px;
+}
+#DropZoneCard:hover {
+    background-color: rgba(219, 234, 254, 0.85);
+    border-color: #2563eb;
 }

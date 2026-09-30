@@ -184,8 +184,12 @@ class StorageDistributionBar(QWidget):
             })
 
         # Animate progressive fill
-        if self._anim and self._anim.state() == QPropertyAnimation.Running:
-            self._anim.stop()
+        if self._anim:
+            try:
+                if self._anim.state() == QPropertyAnimation.Running:
+                    self._anim.stop()
+            except RuntimeError:
+                self._anim = None
 
         self._anim_progress = 0.0
         self._anim = QPropertyAnimation(self, b"anim_progress", self)
@@ -193,7 +197,7 @@ class StorageDistributionBar(QWidget):
         self._anim.setStartValue(0.0)
         self._anim.setEndValue(1.0)
         self._anim.setEasingCurve(QEasingCurve.OutCubic)
-        self._anim.start(QPropertyAnimation.DeleteWhenStopped)
+        self._anim.start()
 
     def paintEvent(self, event):
         painter = QPainter(self)

@@ -1,7 +1,6 @@
 """
 gui/animations.py
-Lightweight, elegant UI animation utilities for MBOX Viewer.
-Uses native PySide6 QPropertyAnimation, QGraphicsOpacityEffect, and natural easing curves.
+Central animation system for MBOX Viewer.
 Zero dependencies on external animation libraries; non-blocking and memory efficient.
 """
 from __future__ import annotations
@@ -15,9 +14,9 @@ from PySide6.QtCore import (
     QPoint,
     QPropertyAnimation,
     QSequentialAnimationGroup,
-    QTimer,
     Qt,
 )
+from PySide6.QtGui import QCursor
 from PySide6.QtWidgets import (
     QGraphicsOpacityEffect,
     QProgressBar,
@@ -63,7 +62,7 @@ def fade_in(
     if on_finished:
         anim.finished.connect(on_finished)
 
-    anim.start(QPropertyAnimation.DeleteWhenStopped)
+    anim.start()
     return anim
 
 
@@ -93,7 +92,7 @@ def fade_out(
             on_finished()
 
     anim.finished.connect(_cleanup)
-    anim.start(QPropertyAnimation.DeleteWhenStopped)
+    anim.start()
     return anim
 
 
@@ -127,56 +126,87 @@ class HoverCardFilter(QObject):
     """
     Event filter installed on cards/frames.
     Provides smooth hover lift, border glow highlight, and pointer cursor.
+    Uses safe animation lifecycle without DeleteWhenStopped to prevent RuntimeError.
     """
 
-    def __init__(self, target_widget: QWidget, lift_px: int = 2, parent: Optional[QObject] = None):
+    def __init__(self, target_widget: QWidget, lift_px: int = 3, parent: Optional[QObject] = None):
         super().__init__(parent or target_widget)
         self._target = target_widget
         self._lift_px = lift_px
-        self._original_pos: Optional[QPoint] = None
+        self._base_y: Optional[int] = None
         self._pos_anim: Optional[QPropertyAnimation] = None
 
         self._target.setMouseTracking(True)
         self._target.setCursor(Qt.PointingHandCursor)
         self._target.installEventFilter(self)
 
+    def _is_anim_running(self) -> bool:
+        if self._pos_anim is None:
+            return False
+        try:
+            return self._pos_anim.state() == QPropertyAnimation.Running
+        except RuntimeError:
+            self._pos_anim = None
+            return False
+
+    def _stop_anim(self) -> None:
+        if self._is_anim_running():
+            try:
+                self._pos_anim.stop()
+            except RuntimeError:
+                self._pos_anim = None
+
+    def _is_cursor_inside(self) -> bool:
+        try:
+            local_pos = self._target.mapFromGlobal(QCursor.pos())
+            return self._target.rect().contains(local_pos)
+        except Exception:
+            return False
+
     def eventFilter(self, watched: QObject, event: QEvent) -> bool:
         if watched == self._target:
-            if event.type() == QEvent.Enter:
+            t = event.type()
+            if t == QEvent.Enter:
                 self._on_enter()
-            elif event.type() == QEvent.Leave:
-                self._on_leave()
+            elif t == QEvent.Leave:
+                # Only trigger leave if cursor is truly outside the card boundaries
+                if not self._is_cursor_inside():
+                    self._on_leave()
         return super().eventFilter(watched, event)
 
     def _on_enter(self):
         if not self._target.isEnabled():
             return
-        if self._original_pos is None:
-            self._original_pos = self._target.pos()
 
-        if self._pos_anim and self._pos_anim.state() == QPropertyAnimation.Running:
-            self._pos_anim.stop()
+        current_pos = self._target.pos()
+        if not self._is_anim_running():
+            self._base_y = current_pos.y()
+        elif self._base_y is None:
+            self._base_y = current_pos.y()
 
-        target_y = self._original_pos.y() - self._lift_px
+        self._stop_anim()
+
+        target_y = self._base_y - self._lift_px
         self._pos_anim = QPropertyAnimation(self._target, b"pos", self)
         self._pos_anim.setDuration(120)
-        self._pos_anim.setStartValue(self._target.pos())
-        self._pos_anim.setEndValue(QPoint(self._original_pos.x(), target_y))
+        self._pos_anim.setStartValue(current_pos)
+        self._pos_anim.setEndValue(QPoint(current_pos.x(), target_y))
         self._pos_anim.setEasingCurve(QEasingCurve.OutCubic)
-        self._pos_anim.start(QPropertyAnimation.DeleteWhenStopped)
+        self._pos_anim.start()
 
     def _on_leave(self):
-        if self._original_pos is None:
+        if self._base_y is None:
             return
-        if self._pos_anim and self._pos_anim.state() == QPropertyAnimation.Running:
-            self._pos_anim.stop()
+
+        current_pos = self._target.pos()
+        self._stop_anim()
 
         self._pos_anim = QPropertyAnimation(self._target, b"pos", self)
         self._pos_anim.setDuration(150)
-        self._pos_anim.setStartValue(self._target.pos())
-        self._pos_anim.setEndValue(self._original_pos)
+        self._pos_anim.setStartValue(current_pos)
+        self._pos_anim.setEndValue(QPoint(current_pos.x(), self._base_y))
         self._pos_anim.setEasingCurve(QEasingCurve.OutCubic)
-        self._pos_anim.start(QPropertyAnimation.DeleteWhenStopped)
+        self._pos_anim.start()
 
 
 # ----------------------------------------------------------------------
@@ -190,15 +220,19 @@ def animate_progress_bar(
 ) -> None:
     """
     Smoothly animates a QProgressBar to target_value using OutCubic easing
-    instead of instant jumpy increments.
+    instead of instant jumpy increments. Safe from C++ object deletion errors.
     """
     if not pbar.isVisible():
         pbar.setValue(target_value)
         return
 
     old_anim = getattr(pbar, "_value_anim", None)
-    if old_anim and old_anim.state() == QPropertyAnimation.Running:
-        old_anim.stop()
+    if old_anim:
+        try:
+            if old_anim.state() == QPropertyAnimation.Running:
+                old_anim.stop()
+        except RuntimeError:
+            pass
 
     curr_val = pbar.value()
     if curr_val == target_value:
@@ -210,7 +244,7 @@ def animate_progress_bar(
     anim.setEndValue(target_value)
     anim.setEasingCurve(QEasingCurve.OutCubic)
     setattr(pbar, "_value_anim", anim)
-    anim.start(QPropertyAnimation.DeleteWhenStopped)
+    anim.start()
 
 
 # ----------------------------------------------------------------------
@@ -246,4 +280,4 @@ def pulse_widget(
     if on_finished:
         group.finished.connect(on_finished)
 
-    group.start(QPropertyAnimation.DeleteWhenStopped)
+    group.start()
