@@ -31,6 +31,9 @@
 2. [Visual Showcase & Screenshots](#-visual-showcase)
 3. [Key Features](#-key-features)
 4. [System Requirements & Installation](#-system-requirements--installation)
+   - [1. Prerequisites](#1-prerequisites)
+   - [2. Required Python Libraries & Dependencies](#2-required-python-libraries--dependencies)
+   - [3. Step-by-Step Installation](#3-step-by-step-installation)
 5. [How to Launch the Application](#-how-to-launch-the-application)
 6. [Comprehensive Feature Guide & Tutorials](#-comprehensive-feature-guide--tutorials)
    - [1. Welcome & Quick Launch Screen](#1-welcome--quick-launch-screen)
@@ -128,14 +131,37 @@ When exporting your Gmail mailbox via **Google Takeout**, you receive a massive 
 ## 🛠️ System Requirements & Installation
 
 ### 1. Prerequisites
-- **Operating System:** Windows 10/11, macOS 11+, or modern Linux distributions.
-- **Python:** Version **3.10**, **3.11**, or **3.12+**.
-  > ⚠️ **IMPORTANT (Windows Users):** When installing Python from [python.org](https://www.python.org/downloads/), check the box:  
-  > `☑ Add python.exe to PATH` on the first installer screen.
+- **Operating System:** Windows 10/11 (64-bit recommended), macOS 11+ (Big Sur or newer), or modern Linux distributions (Ubuntu 20.04+, Debian 11+, Fedora, Arch).
+- **Python Version:** **Python 3.10**, **3.11**, or **3.12+**.
+  > ⚠️ **CRITICAL (Windows Users):** When installing Python from [python.org](https://www.python.org/downloads/), make sure to check the box:  
+  > `☑ Add python.exe to PATH` on the initial installer screen. If Python is not on your PATH, Windows won't be able to run `python` or `pip` from the command line or via `run.bat`.
 
 ---
 
-### 2. Step-by-Step Installation
+### 2. Required Python Libraries & Dependencies
+
+MBOX Viewer is designed to be lightweight with minimal external dependencies. Below is the complete specification of required and recommended libraries:
+
+| Library / Package | Minimum Version | Category | Role & Purpose in MBOX Viewer |
+|---|---|---|---|
+| [`PySide6`](https://pypi.org/project/PySide6/) | `>= 6.5.0` | **Core GUI (Required)** | Official Qt 6 framework bindings for Python. Powers the entire desktop user interface, high-DPI scaling, dark/light themes, hardware-accelerated animations, and responsive splitters. |
+| [`chardet`](https://pypi.org/project/chardet/) | `>= 5.0.0` | **Encoding (Required)** | Universal character encoding detector. Automatically detects non-UTF-8 encodings (such as `ISO-8859-1`, `Windows-1252`, `Shift_JIS`, or `GB2312`) across legacy and international emails to eliminate mojibake and decode crashes. |
+| [`Pillow`](https://pypi.org/project/Pillow/) | `>= 9.0.0` | **Imaging (Recommended)** | Python Imaging Library fork. Used for high-fidelity application icon processing, format conversions, and asynchronous media thumbnail generation. |
+
+#### 📦 Built-in Standard Library Modules (Zero Installation Required)
+The remainder of MBOX Viewer is built strictly on Python's robust standard library, requiring no external package downloads:
+- `mailbox` : Streaming MBOX file format reader and message boundary scanner.
+- `email` & `email.policy` : Robust MIME multipart header parsing and RFC 2822 / 5322 compliance.
+- `concurrent.futures` : Multi-threaded worker pools for high-throughput batch attachment extraction.
+- `ctypes` : Native Windows Win32 API calls (`SetClassLongPtrW`, `WM_SETICON`, `AppUserModelID`) for taskbar icon binding.
+- `datetime` : Date normalization, sorting, and yearly distribution histograms.
+- `re` & `json` : Fast regular expressions and JSON cache serialization.
+- `tempfile` & `os` : Safe cross-platform temporary file sandbox for attachment previews.
+- `hashlib` : Content hashing for duplicate attachment detection.
+
+---
+
+### 3. Step-by-Step Installation
 
 #### Step A: Clone or Download the Repository
 Clone the repository using Git or GitHub Desktop:
@@ -143,18 +169,46 @@ Clone the repository using Git or GitHub Desktop:
 git clone https://github.com/jackingpanda/mbox_viewer.git
 cd mbox_viewer
 ```
-*(Alternatively, click **Code ➔ Download ZIP** on GitHub and extract the archive to your desired location).*
+*(Alternatively, click **Code ➔ Download ZIP** on GitHub and extract the archive to any folder on your computer).*
 
-#### Step B: Install Python Dependencies
-Run pip inside the project folder:
+#### Step B: (Optional but Recommended) Create a Virtual Environment
+Isolating dependencies inside a virtual environment prevents conflicts with other Python projects on your machine:
+
+**On Windows (PowerShell):**
+```powershell
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+```
+
+**On Windows (Command Prompt `cmd.exe`):**
+```cmd
+python -m venv venv
+venv\Scripts\activate.bat
+```
+
+**On macOS & Linux:**
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+#### Step C: Install Dependencies via `pip`
+Install all required libraries with a single command:
 ```bash
 pip install -r requirements.txt
 ```
 
-> **Core Dependencies ([requirements.txt](requirements.txt)):**
-> - `PySide6>=6.5.0` : Official Qt 6 GUI framework bindings for Python.
-> - `chardet>=5.0.0` : Robust automatic charset detection for legacy and international email encodings.
-> - `Pillow>=9.0.0` : Image processing support for icon rendering and image thumbnail previews.
+**Alternative: Manual Direct Installation**  
+If you prefer installing packages directly without using `requirements.txt`:
+```bash
+pip install "PySide6>=6.5.0" "chardet>=5.0.0" "Pillow>=9.0.0"
+```
+
+**Verification:**  
+Verify that all packages are installed correctly:
+```bash
+python -c "import PySide6, chardet, PIL; print('All dependencies verified successfully!')"
+```
 
 ---
 
