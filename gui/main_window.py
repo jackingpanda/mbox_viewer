@@ -48,6 +48,7 @@ from utils.constants import (
 )
 from utils.helpers import format_size
 from utils.settings import AppSettings
+from gui.animations import cross_fade_stacked, fade_in, HoverCardFilter, pulse_widget
 from workers.body_worker import BodyWorker
 from workers.export_worker import ExportWorker
 from workers.parse_worker import ParseWorker
@@ -477,6 +478,7 @@ class MainWindow(QMainWindow):
         # Drop zone card
         drop_card = QFrame()
         drop_card.setObjectName("DropZoneCard")
+        self._drop_card = drop_card
         drop_layout = QVBoxLayout(drop_card)
         drop_layout.setContentsMargins(18, 14, 18, 14)
         drop_layout.setAlignment(Qt.AlignCenter)
@@ -485,6 +487,13 @@ class MainWindow(QMainWindow):
         drop_lbl.setAlignment(Qt.AlignCenter)
         drop_layout.addWidget(drop_lbl)
         cards_layout.addWidget(drop_card)
+
+        # Attach smooth hover lift filter to all cards
+        for card in (c1, c2, c3, c4, drop_card):
+            HoverCardFilter(card, lift_px=3)
+
+        # Soft entrance fade-in
+        fade_in(cards_widget, duration=240)
 
         # Shortcut hints
         hints_lbl = QLabel("Tip: Tekan tombol 1, 2, 3, atau 4 di keyboard untuk akses instan  •  Ctrl+Shift+T Ganti Tema")
@@ -539,6 +548,8 @@ class MainWindow(QMainWindow):
             for url in event.mimeData().urls():
                 if url.toLocalFile().lower().endswith(".mbox"):
                     event.acceptProposedAction()
+                    if hasattr(self, "_drop_card") and self._drop_card and self._drop_card.isVisible():
+                        pulse_widget(self._drop_card, min_opacity=0.45, max_opacity=1.0, duration=350)
                     return
         event.ignore()
 
@@ -583,7 +594,7 @@ class MainWindow(QMainWindow):
         self._progress_bar.setVisible(False)
         self._btn_cancel_op.setVisible(False)
         if hasattr(self, "_stacked_widget"):
-            self._stacked_widget.setCurrentIndex(0)
+            cross_fade_stacked(self._stacked_widget, 0, duration=180)
 
     # ------------------------------------------------------------------
     # Welcome Screen Actions & Keyboard Shortcuts
@@ -644,7 +655,7 @@ class MainWindow(QMainWindow):
     def _start_parse(self, filepath: str):
         self._on_close_file()
         if hasattr(self, "_stacked_widget"):
-            self._stacked_widget.setCurrentIndex(1)
+            cross_fade_stacked(self._stacked_widget, 1, duration=220)
 
         self._file_size = os.path.getsize(filepath)
         self._size_label.setText(format_size(self._file_size))

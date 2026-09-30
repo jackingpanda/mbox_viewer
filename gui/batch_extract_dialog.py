@@ -417,7 +417,8 @@ class BatchExtractDialog(QDialog):
     def _on_worker_progress(self, current_email: int, total_emails: int, files_saved: int, file_bytes: int, total_bytes: int, filename: str):
         if self._progress_bar.maximum() != total_emails:
             self._progress_bar.setMaximum(total_emails)
-        self._progress_bar.setValue(current_email)
+        from gui.animations import animate_progress_bar
+        animate_progress_bar(self._progress_bar, current_email, duration=120)
         self._lbl_stat_emails.setText(f"Email: {current_email:,} / {total_emails:,}")
         self._lbl_stat_files.setText(f"File tersimpan: {files_saved:,}")
         self._lbl_stat_bytes.setText(f"Total ukuran: {format_size(total_bytes)}")
@@ -437,6 +438,9 @@ class BatchExtractDialog(QDialog):
 
         status_text = "⚠️ Dibatalkan oleh pengguna." if was_cancelled else "✅ Ekstraksi Selesai!"
         self._lbl_current_file.setText(status_text)
+        from gui.animations import pulse_widget, fade_in
+        pulse_widget(self._lbl_current_file, min_opacity=0.5, max_opacity=1.0, duration=400)
+        fade_in(self._btn_open_folder, duration=200)
 
         msg = (
             f"Proses selesai!\n\n"

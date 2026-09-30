@@ -226,6 +226,8 @@ class EmailViewer(QWidget):
         safe_html = self._sanitize_html(self._html_content)
         self._body_browser.setHtml(safe_html)
         self._body_stack.setCurrentIndex(1)
+        from gui.animations import fade_in
+        fade_in(self._body_browser, duration=150)
 
     def _display_text(self):
         if self._text_content is not None:
@@ -236,6 +238,8 @@ class EmailViewer(QWidget):
         else:
             self._body_browser.setPlainText("(No content)")
         self._body_stack.setCurrentIndex(1)
+        from gui.animations import fade_in
+        fade_in(self._body_browser, duration=150)
 
     def _display_raw(self):
         if self._current_record is None:

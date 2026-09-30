@@ -24,14 +24,18 @@ import tempfile
 from typing import Callable, Optional
 
 from PySide6.QtCore import (
+    Property,
     QAbstractTableModel,
+    QEasingCurve,
     QModelIndex,
+    QPropertyAnimation,
     QRect,
     QSize,
     QSortFilterProxyModel,
     Qt,
     Signal,
 )
+from gui.animations import animate_progress_bar, fade_in
 from PySide6.QtGui import (
     QAction,
     QColor,
@@ -143,7 +147,18 @@ class StorageDistributionBar(QWidget):
         self.setFixedHeight(24)
         self.setMouseTracking(True)
         self._segments: list[dict] = []
+        self._anim_progress: float = 1.0
+        self._anim: Optional[QPropertyAnimation] = None
         self.setCursor(Qt.PointingHandCursor)
+
+    def get_anim_progress(self) -> float:
+        return self._anim_progress
+
+    def set_anim_progress(self, val: float):
+        self._anim_progress = val
+        self.update()
+
+    anim_progress = Property(float, get_anim_progress, set_anim_progress)
 
     def set_stats(self, by_category: dict, total_bytes: int):
         """Update segments with new category breakdown stats."""
@@ -167,7 +182,18 @@ class StorageDistributionBar(QWidget):
                 "icon": info["icon"],
                 "rect": QRect(),
             })
-        self.update()
+
+        # Animate progressive fill
+        if self._anim and self._anim.state() == QPropertyAnimation.Running:
+            self._anim.stop()
+
+        self._anim_progress = 0.0
+        self._anim = QPropertyAnimation(self, b"anim_progress", self)
+        self._anim.setDuration(450)
+        self._anim.setStartValue(0.0)
+        self._anim.setEndValue(1.0)
+        self._anim.setEasingCurve(QEasingCurve.OutCubic)
+        self._anim.start(QPropertyAnimation.DeleteWhenStopped)
 
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -186,12 +212,16 @@ class StorageDistributionBar(QWidget):
         if not self._segments:
             return
 
+        anim_w = int(w * self._anim_progress)
+        if anim_w <= 0:
+            return
+
         x = 0
         total_segs = len(self._segments)
         for i, seg in enumerate(self._segments):
-            seg_w = int((seg["pct"] / 100.0) * w)
-            if i == total_segs - 1:
-                seg_w = w - x
+            seg_w = int((seg["pct"] / 100.0) * anim_w)
+            if i == total_segs - 1 and self._anim_progress >= 0.98:
+                seg_w = anim_w - x
             if seg_w <= 0:
                 continue
 
