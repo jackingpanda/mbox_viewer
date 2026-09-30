@@ -1,15 +1,15 @@
 @echo off
 setlocal
-title MBOX Viewer Launcher
+title MBOX Viewer
 
 cd /d "%~dp0"
 
 :: 1. Verifikasi Python
 python --version >nul 2>&1
-if %ERRORLEVEL% neq 0 (
+if errorlevel 1 (
     echo [ERROR] Python tidak terdeteksi di PATH sistem.
     echo Silakan install Python 3.10+ dari https://www.python.org/
-    echo dan pastikan opsi "Add python.exe to PATH" dicentang.
+    echo dan pastikan opsi "Add python.exe to PATH" dicentang saat instalasi.
     echo.
     pause
     exit /b 1
@@ -17,11 +17,10 @@ if %ERRORLEVEL% neq 0 (
 
 :: 2. Verifikasi PySide6
 python -c "import PySide6" >nul 2>&1
-if %ERRORLEVEL% neq 0 (
-    echo [INFO] Dependensi PySide6 belum terpasang.
-    echo Sedang menginstall dependencies dari requirements.txt...
+if errorlevel 1 (
+    echo [INFO] Menginstall dependencies dari requirements.txt...
     python -m pip install -r requirements.txt
-    if %ERRORLEVEL% neq 0 (
+    if errorlevel 1 (
         echo [ERROR] Gagal memasang dependensi PySide6.
         echo.
         pause
@@ -29,23 +28,16 @@ if %ERRORLEVEL% neq 0 (
     )
 )
 
-:: 3. Luncurkan GUI MBOX Viewer langsung (tanpa menu prompt CMD)
-:: Jika ada file yang di-drag-and-drop ke run.bat atau melalui CLI argumen
+:: 3. Luncurkan GUI MBOX Viewer langsung (tanpa prompt menu CMD)
+echo Membuka MBOX Viewer...
 if "%~1" neq "" (
-    where pythonw >nul 2>&1
-    if %ERRORLEVEL% equ 0 (
-        start "" pythonw main.py %*
-    ) else (
-        start "" python main.py %*
-    )
-    exit /b 0
+    python main.py %*
+) else (
+    python main.py
 )
 
-:: Luncurkan GUI MBOX Viewer langsung ke Welcome Screen interaktif
-where pythonw >nul 2>&1
-if %ERRORLEVEL% equ 0 (
-    start "" pythonw main.py
-) else (
-    start "" python main.py
+if errorlevel 1 (
+    echo.
+    echo [ERROR] Terjadi error saat menjalankan aplikasi (Kode exit: %ERRORLEVEL%).
+    pause
 )
-exit /b 0

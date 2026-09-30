@@ -73,6 +73,8 @@ def main() -> int:
             log.warning("CLI argument is not a valid .mbox file: %s", cli_path)
 
     window.show()
+    window.raise_()
+    window.activateWindow()
     return app.exec()
 
 
