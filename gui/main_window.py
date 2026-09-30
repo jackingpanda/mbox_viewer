@@ -1086,6 +1086,14 @@ class MainWindow(QMainWindow):
                 worker.quit()
                 worker.wait(1000)
 
+    def showEvent(self, event):
+        super().showEvent(event)
+        try:
+            from gui.app_icon import apply_windows_taskbar_icon
+            apply_windows_taskbar_icon(int(self.winId()))
+        except Exception:
+            pass
+
     def closeEvent(self, event):
         self._cancel_all_workers()
         self._parser.close()

@@ -6,7 +6,7 @@ Application-wide constants and developer metadata.
 APP_NAME = "MBOX Viewer"
 APP_VERSION = "1.3.0"
 ORG_NAME = "MboxViewer"
-APP_ID = "dimasaldrian.mboxviewer.app.1.3"
+APP_ID = "DimasAldrian.MboxViewer.TakeoutExplorer.v1"
 
 # Developer attribution
 APP_AUTHOR = "Dimas Aldrian"

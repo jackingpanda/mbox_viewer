@@ -12,10 +12,21 @@ _ROOT = os.path.dirname(os.path.abspath(__file__))
 if _ROOT not in sys.path:
     sys.path.insert(0, _ROOT)
 
+from utils.constants import APP_ID, APP_NAME, APP_VERSION, ORG_NAME
+
+# CRITICAL: Set explicit AppUserModelID on Windows BEFORE any GUI/Qt imports
+# to ensure Windows Shell binds the process to our application identity immediately.
+if sys.platform == "win32":
+    try:
+        import ctypes
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(APP_ID)
+    except Exception:
+        pass
+
 from PySide6.QtWidgets import QApplication
 
+from gui.app_icon import apply_windows_taskbar_icon, get_app_icon
 from gui.main_window import MainWindow
-from utils.constants import APP_ID, APP_NAME, APP_VERSION, ORG_NAME
 from utils.settings import AppSettings
 
 
@@ -50,21 +61,12 @@ def main() -> int:
     # Enable high-DPI scaling (must be set before QApplication)
     os.environ.setdefault("QT_AUTO_SCREEN_SCALE_FACTOR", "1")
 
-    # Set explicit AppUserModelID on Windows so taskbar displays our custom icon
-    if sys.platform == "win32":
-        try:
-            import ctypes
-            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(APP_ID)
-        except Exception as e:
-            log.debug("SetCurrentProcessExplicitAppUserModelID failed: %s", e)
-
     app = QApplication(sys.argv)
     app.setApplicationName(APP_NAME)
     app.setApplicationVersion(APP_VERSION)
     app.setOrganizationName(ORG_NAME)
 
     # Set application icon for all windows and taskbar
-    from gui.app_icon import get_app_icon
     app_icon = get_app_icon()
     app.setWindowIcon(app_icon)
 
@@ -86,6 +88,14 @@ def main() -> int:
             log.warning("CLI argument is not a valid .mbox file: %s", cli_path)
 
     window.show()
+
+    # Explicitly enforce native Win32 icons on the window HWND & Class
+    if sys.platform == "win32":
+        try:
+            apply_windows_taskbar_icon(int(window.winId()))
+        except Exception as e:
+            log.debug("Native taskbar icon call failed: %s", e)
+
     window.raise_()
     window.activateWindow()
     return app.exec()
