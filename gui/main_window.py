@@ -336,12 +336,6 @@ class MainWindow(QMainWindow):
         sub_lbl.setAlignment(Qt.AlignCenter)
         hero_layout.addWidget(sub_lbl)
 
-        author_lbl = QLabel(f"Developer: <b>{APP_AUTHOR}</b> (<a href='mailto:{APP_EMAIL}' style='color:#60a5fa;'>{APP_EMAIL}</a>)")
-        author_lbl.setStyleSheet("font-size: 9.5pt; color: #64748b;")
-        author_lbl.setAlignment(Qt.AlignCenter)
-        author_lbl.setOpenExternalLinks(True)
-        hero_layout.addWidget(author_lbl)
-
         layout.addWidget(hero)
 
         # Cards container (max width 760)
