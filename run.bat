@@ -4,32 +4,32 @@ title MBOX Viewer
 
 cd /d "%~dp0"
 
-:: 1. Verifikasi Python
+:: 1. Verify Python Installation
 python --version >nul 2>&1
 if errorlevel 1 (
-    echo [ERROR] Python tidak terdeteksi di PATH sistem.
-    echo Silakan install Python 3.10+ dari https://www.python.org/
-    echo dan pastikan opsi "Add python.exe to PATH" dicentang saat instalasi.
+    echo [ERROR] Python not found in system PATH.
+    echo Please install Python 3.10+ from https://www.python.org/
+    echo and ensure "Add python.exe to PATH" is checked during installation.
     echo.
     pause
     exit /b 1
 )
 
-:: 2. Verifikasi PySide6
+:: 2. Verify PySide6 and dependencies
 python -c "import PySide6" >nul 2>&1
 if errorlevel 1 (
-    echo [INFO] Menginstall dependencies dari requirements.txt...
+    echo [INFO] Installing required dependencies from requirements.txt...
     python -m pip install -r requirements.txt
     if errorlevel 1 (
-        echo [ERROR] Gagal memasang dependensi PySide6.
+        echo [ERROR] Failed to install required dependencies.
         echo.
         pause
         exit /b 1
     )
 )
 
-:: 3. Luncurkan GUI MBOX Viewer langsung (tanpa prompt menu CMD)
-echo Membuka MBOX Viewer...
+:: 3. Launch MBOX Viewer GUI
+echo Launching MBOX Viewer...
 if "%~1" neq "" (
     python main.py %*
 ) else (
@@ -38,6 +38,6 @@ if "%~1" neq "" (
 
 if errorlevel 1 (
     echo.
-    echo [ERROR] Terjadi error saat menjalankan aplikasi (Kode exit: %ERRORLEVEL%).
+    echo [ERROR] An error occurred while running the application (Exit code: %ERRORLEVEL%).
     pause
 )

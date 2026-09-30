@@ -131,14 +131,14 @@ class MainWindow(QMainWindow):
 
         self._batch_extract_act = QAction("⚡ Batch Extract Attachments…", self)
         self._batch_extract_act.setShortcut("Ctrl+Shift+E")
-        self._batch_extract_act.setToolTip("Ekstraksi massal lampiran dengan filter tipe & opsi folder")
+        self._batch_extract_act.setToolTip("Batch extract attachments with extension filters & folder options")
         self._batch_extract_act.triggered.connect(lambda: self._on_show_batch_extract_dialog())
         self._batch_extract_act.setEnabled(False)
         export_menu.addAction(self._batch_extract_act)
 
         self._media_analyzer_act = QAction("📊 Storage & Media Analyzer...", self)
         self._media_analyzer_act.setShortcut("Ctrl+W")
-        self._media_analyzer_act.setToolTip("Analisis penyimpanan media: urutkan semua file dari terbesar ke terkecil")
+        self._media_analyzer_act.setToolTip("Storage & Media Analyzer: rank all media files from largest to smallest")
         self._media_analyzer_act.triggered.connect(self._on_show_media_analyzer)
         self._media_analyzer_act.setEnabled(False)
         export_menu.addAction(self._media_analyzer_act)
@@ -201,13 +201,13 @@ class MainWindow(QMainWindow):
         tb.addSeparator()
 
         self._tb_batch_extract = QAction("⚡ Batch Extract", self)
-        self._tb_batch_extract.setToolTip("Ekstraksi massal lampiran dengan filter & opsi folder  (Ctrl+Shift+E)")
+        self._tb_batch_extract.setToolTip("Batch extract attachments with filters & folder options (Ctrl+Shift+E)")
         self._tb_batch_extract.setEnabled(False)
         self._tb_batch_extract.triggered.connect(lambda: self._on_show_batch_extract_dialog())
         tb.addAction(self._tb_batch_extract)
 
         self._tb_analyzer = QAction("📊 Media Analyzer", self)
-        self._tb_analyzer.setToolTip("MBOX Storage & Media Analyzer (Urutkan File Terbesar ke Terkecil)  (Ctrl+W)")
+        self._tb_analyzer.setToolTip("MBOX Storage & Media Analyzer (Rank files largest to smallest) (Ctrl+W)")
         self._tb_analyzer.setEnabled(False)
         self._tb_analyzer.triggered.connect(self._on_show_media_analyzer)
         tb.addAction(self._tb_analyzer)
@@ -339,7 +339,7 @@ class MainWindow(QMainWindow):
         title_lbl.setAlignment(Qt.AlignCenter)
         hero_layout.addWidget(title_lbl)
 
-        sub_lbl = QLabel("Aplikasi penjelajah email arsip Takeout, ekstraksi massal lampiran, & analisis penyimpanan.")
+        sub_lbl = QLabel("High-performance Google Takeout email archive explorer, batch attachment extractor, & storage analyzer.")
         sub_lbl.setStyleSheet("font-size: 10.5pt; color: #94a3b8;")
         sub_lbl.setAlignment(Qt.AlignCenter)
         hero_layout.addWidget(sub_lbl)
@@ -359,9 +359,9 @@ class MainWindow(QMainWindow):
         if takeout_exists:
             try:
                 sz = os.path.getsize(DEFAULT_TAKEOUT_PATH)
-                takeout_size_str = f"{format_size(sz)} (Terdeteksi Otomatis)"
+                takeout_size_str = f"{format_size(sz)} (Auto-Detected)"
             except Exception:
-                takeout_size_str = "Terdeteksi"
+                takeout_size_str = "Detected"
 
         # Card 1: Primary Takeout
         c1 = QFrame()
@@ -372,18 +372,18 @@ class MainWindow(QMainWindow):
 
         c1_info = QVBoxLayout()
         c1_info.setSpacing(5)
-        c1_title = QLabel("📥 [1] Buka Arsip Gmail Takeout Langsung")
+        c1_title = QLabel("📥 [1] Open Gmail Takeout Archive Directly")
         c1_title.setStyleSheet("font-size: 13pt; font-weight: bold; color: #60a5fa;")
         if takeout_exists:
             c1_desc = QLabel(f"All mail Including Spam and Trash.mbox — <b style='color:#34d399;'>{takeout_size_str}</b>")
         else:
-            c1_desc = QLabel("Buka arsip Takeout bawaan (File default belum ditemukan di folder Takeout).")
+            c1_desc = QLabel("Open default Takeout archive (File not yet found in default Takeout folder).")
         c1_desc.setStyleSheet("font-size: 10pt; color: #cbd5e1;")
         c1_info.addWidget(c1_title)
         c1_info.addWidget(c1_desc)
         c1_layout.addLayout(c1_info, 1)
 
-        c1_btn = QPushButton("🚀 Buka Sekarang")
+        c1_btn = QPushButton("🚀 Open Archive")
         c1_btn.setCursor(Qt.PointingHandCursor)
         c1_btn.setStyleSheet("""
         QPushButton {
@@ -410,15 +410,15 @@ class MainWindow(QMainWindow):
 
         c2_info = QVBoxLayout()
         c2_info.setSpacing(5)
-        c2_title = QLabel("📂 [2] Pilih File .MBOX Lainnya")
+        c2_title = QLabel("📂 [2] Choose Another .MBOX File")
         c2_title.setStyleSheet("font-size: 12pt; font-weight: bold;")
-        c2_desc = QLabel("Buka file arsip .mbox manual dari folder lain di komputer atau drive eksternal.")
+        c2_desc = QLabel("Manually open any .mbox file from another folder or external drive.")
         c2_desc.setStyleSheet("font-size: 9.5pt; color: #94a3b8;")
         c2_info.addWidget(c2_title)
         c2_info.addWidget(c2_desc)
         c2_layout.addLayout(c2_info, 1)
 
-        c2_btn = QPushButton("Pilih File…")
+        c2_btn = QPushButton("Browse File…")
         c2_btn.setCursor(Qt.PointingHandCursor)
         c2_btn.setStyleSheet("""
         QPushButton {
@@ -446,10 +446,10 @@ class MainWindow(QMainWindow):
         c3_layout.setSpacing(8)
         c3_title = QLabel("📊 [3] Storage & Media Analyzer")
         c3_title.setStyleSheet("font-size: 11pt; font-weight: bold;")
-        c3_desc = QLabel("Urutkan semua file dari terbesar ke terkecil, visualisasi batang kategori, dan filter media (Video, Foto, Dokumen, Zip).")
+        c3_desc = QLabel("Rank all files largest to smallest, interactive category distribution bar, and media filters (Videos, Photos, Documents, Archives).")
         c3_desc.setStyleSheet("font-size: 9pt; color: #94a3b8;")
         c3_desc.setWordWrap(True)
-        c3_btn = QPushButton("Buka Media Analyzer")
+        c3_btn = QPushButton("Open Media Analyzer")
         c3_btn.setCursor(Qt.PointingHandCursor)
         c3_btn.setStyleSheet("font-size: 9.5pt; padding: 8px 14px; border-radius: 6px;")
         c3_btn.clicked.connect(self._on_welcome_open_analyzer)
@@ -467,10 +467,10 @@ class MainWindow(QMainWindow):
         c4_layout.setSpacing(8)
         c4_title = QLabel("⚡ [4] Batch Extractor")
         c4_title.setStyleSheet("font-size: 11pt; font-weight: bold;")
-        c4_desc = QLabel("Ekstrak semua lampiran sekaligus dengan filter ekstensi & opsi subfolder.")
+        c4_desc = QLabel("Extract thousands of attachments at once with extension filters & folder structure options.")
         c4_desc.setStyleSheet("font-size: 9pt; color: #94a3b8;")
         c4_desc.setWordWrap(True)
-        c4_btn = QPushButton("Buka Batch Extractor")
+        c4_btn = QPushButton("Open Batch Extractor")
         c4_btn.setCursor(Qt.PointingHandCursor)
         c4_btn.setStyleSheet("font-size: 9.5pt; padding: 8px 14px; border-radius: 6px;")
         c4_btn.clicked.connect(self._on_welcome_open_batch_extract)
@@ -489,7 +489,7 @@ class MainWindow(QMainWindow):
         drop_layout = QVBoxLayout(drop_card)
         drop_layout.setContentsMargins(18, 14, 18, 14)
         drop_layout.setAlignment(Qt.AlignCenter)
-        drop_lbl = QLabel("📥 Atau seret & lepas (drag-and-drop) file .mbox ke jendela ini")
+        drop_lbl = QLabel("📥 Or drag and drop any .mbox file into this window")
         drop_lbl.setStyleSheet("font-size: 9.5pt; color: #60a5fa; font-weight: 500;")
         drop_lbl.setAlignment(Qt.AlignCenter)
         drop_layout.addWidget(drop_lbl)
@@ -503,7 +503,7 @@ class MainWindow(QMainWindow):
         fade_in(cards_widget, duration=240)
 
         # Shortcut hints
-        hints_lbl = QLabel("Tip: Tekan tombol 1, 2, 3, atau 4 di keyboard untuk akses instan  •  Ctrl+Shift+T Ganti Tema")
+        hints_lbl = QLabel("Tip: Press 1, 2, 3, or 4 on keyboard for instant access  •  Ctrl+Shift+T Toggle Theme")
         hints_lbl.setStyleSheet("font-size: 8.5pt; color: #64748b;")
         hints_lbl.setAlignment(Qt.AlignCenter)
         cards_layout.addWidget(hints_lbl)
@@ -615,7 +615,7 @@ class MainWindow(QMainWindow):
             QMessageBox.information(
                 self,
                 "File Takeout",
-                f"File Takeout default tidak ditemukan di:\n{DEFAULT_TAKEOUT_PATH}\n\nSilakan pilih file .mbox manual.",
+                f"Default Takeout file was not found at:\n{DEFAULT_TAKEOUT_PATH}\n\nPlease select an .mbox file manually.",
             )
             self._on_open_file()
 
@@ -855,7 +855,7 @@ class MainWindow(QMainWindow):
     def _on_show_batch_extract_dialog(self, selected: Optional[list[EmailRecord]] = None):
         """Open the dedicated Batch Attachment Extractor dialog."""
         if not self._all_records:
-            QMessageBox.information(self, "Belum Ada File", "Silakan buka file .mbox terlebih dahulu.")
+            QMessageBox.information(self, "No File Loaded", "Please open an .mbox file first.")
             return
 
         sel = selected if selected is not None else self._email_list.selected_records()
@@ -1009,7 +1009,7 @@ class MainWindow(QMainWindow):
             QMessageBox.information(
                 self,
                 "No MBOX Loaded",
-                "Silakan buka file MBOX terlebih dahulu sebelum menganalisis media.",
+                "Please open an MBOX file first before analyzing storage.",
             )
             return
 

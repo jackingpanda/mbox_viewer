@@ -10,11 +10,11 @@ echo.
 python build_release.py
 if errorlevel 1 (
     echo.
-    echo [ERROR] Terjadi kesalahan saat mem-build release package.
+    echo [ERROR] An error occurred while building the release package.
     pause
     exit /b 1
 )
 
 echo.
-echo Selesai! File ZIP siap diupload ke GitHub Releases.
+echo Build complete! The release ZIP is ready to be uploaded to GitHub Releases.
 pause

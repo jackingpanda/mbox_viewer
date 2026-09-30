@@ -469,7 +469,7 @@ class MediaAnalyzerDialog(QDialog):
         super().__init__(parent)
         from gui.app_icon import get_app_icon
         self.setWindowIcon(get_app_icon())
-        self.setWindowTitle("📊 MBOX Storage & Media Analyzer — Urutkan File Terbesar ke Terkecil")
+        self.setWindowTitle("📊 MBOX Storage & Media Analyzer — Rank Files Largest to Smallest")
         self.resize(1240, 780)
         self.setMinimumSize(980, 600)
 
@@ -518,12 +518,12 @@ class MediaAnalyzerDialog(QDialog):
         h_layout.addWidget(self._stat_total_lbl)
 
         self._btn_rescan = QPushButton("🔄 Rescan MBOX")
-        self._btn_rescan.setToolTip("Pindai ulang seluruh lampiran & perbarui index cache")
+        self._btn_rescan.setToolTip("Rescan all attachments & rebuild cache index")
         self._btn_rescan.clicked.connect(self._start_scan)
         h_layout.addWidget(self._btn_rescan)
 
         self._btn_extract_filtered = QPushButton("⚡ Extract Filtered…")
-        self._btn_extract_filtered.setToolTip("Ekstraksi semua media yang cocok dengan filter saat ini")
+        self._btn_extract_filtered.setToolTip("Extract all media matching current filters")
         self._btn_extract_filtered.setStyleSheet("background-color: #2563eb; color: white; font-weight: bold; padding: 6px 14px;")
         self._btn_extract_filtered.clicked.connect(self._on_extract_filtered)
         h_layout.addWidget(self._btn_extract_filtered)
@@ -585,7 +585,7 @@ class MediaAnalyzerDialog(QDialog):
 
         # Search line
         self._search_input = QLineEdit()
-        self._search_input.setPlaceholderText("🔍 Cari nama file, pengirim, subjek…")
+        self._search_input.setPlaceholderText("🔍 Search filename, sender, subject…")
         self._search_input.setClearButtonEnabled(True)
         self._search_input.textChanged.connect(self._apply_filters)
         self._search_input.setMinimumWidth(260)
@@ -625,7 +625,7 @@ class MediaAnalyzerDialog(QDialog):
 
         # Reset button
         self._btn_reset_filter = QPushButton("✕ Reset")
-        self._btn_reset_filter.setToolTip("Reset semua filter ke kondisi awal")
+        self._btn_reset_filter.setToolTip("Reset all filters to defaults")
         self._btn_reset_filter.setFixedHeight(28)
         self._btn_reset_filter.clicked.connect(self._on_reset_filters)
         ft_layout.addWidget(self._btn_reset_filter)
@@ -764,7 +764,7 @@ class MediaAnalyzerDialog(QDialog):
         pc_layout.setContentsMargins(8, 8, 8, 8)
         pc_layout.setAlignment(Qt.AlignCenter)
 
-        self._preview_image_lbl = QLabel("Pilih file untuk pratinjau")
+        self._preview_image_lbl = QLabel("Select a file to preview")
         self._preview_image_lbl.setAlignment(Qt.AlignCenter)
         self._preview_image_lbl.setWordWrap(True)
         self._preview_image_lbl.setStyleSheet("color: #e2e8f0; font-size: 11pt;")
@@ -774,7 +774,7 @@ class MediaAnalyzerDialog(QDialog):
 
         # Open in System App button
         self._btn_open_system = QPushButton("▶️ Open with Default App")
-        self._btn_open_system.setToolTip("Buka file ini langsung dengan aplikasi default Windows (VLC, Media Player, Photos, dsb.)")
+        self._btn_open_system.setToolTip("Open this file directly with system default app (VLC, Media Player, Photos, etc.)")
         self._btn_open_system.clicked.connect(self._on_open_current_in_system)
         self._btn_open_system.setEnabled(False)
         layout.addWidget(self._btn_open_system)
@@ -790,7 +790,7 @@ class MediaAnalyzerDialog(QDialog):
         info_layout.setSpacing(8)
 
         # File Details Box
-        file_box = QGroupBox("Informasi File")
+        file_box = QGroupBox("File Information")
         fb_layout = QGridLayout(file_box)
         fb_layout.setSpacing(6)
 
@@ -803,19 +803,19 @@ class MediaAnalyzerDialog(QDialog):
         self._lbl_info_type = QLabel("-")
         self._lbl_info_cat = QLabel("-")
 
-        fb_layout.addWidget(QLabel("Nama:"), 0, 0)
+        fb_layout.addWidget(QLabel("Name:"), 0, 0)
         fb_layout.addWidget(self._lbl_info_name, 0, 1)
-        fb_layout.addWidget(QLabel("Ukuran:"), 1, 0)
+        fb_layout.addWidget(QLabel("Size:"), 1, 0)
         fb_layout.addWidget(self._lbl_info_size, 1, 1)
-        fb_layout.addWidget(QLabel("Tipe MIME:"), 2, 0)
+        fb_layout.addWidget(QLabel("MIME Type:"), 2, 0)
         fb_layout.addWidget(self._lbl_info_type, 2, 1)
-        fb_layout.addWidget(QLabel("Kategori:"), 3, 0)
+        fb_layout.addWidget(QLabel("Category:"), 3, 0)
         fb_layout.addWidget(self._lbl_info_cat, 3, 1)
 
         info_layout.addWidget(file_box)
 
         # Email Context Box
-        email_box = QGroupBox("Email Pengirim")
+        email_box = QGroupBox("Source Email")
         eb_layout = QGridLayout(email_box)
         eb_layout.setSpacing(6)
 
@@ -826,11 +826,11 @@ class MediaAnalyzerDialog(QDialog):
         self._lbl_info_date = QLabel("-")
         self._lbl_info_email_idx = QLabel("-")
 
-        eb_layout.addWidget(QLabel("Pengirim:"), 0, 0)
+        eb_layout.addWidget(QLabel("Sender:"), 0, 0)
         eb_layout.addWidget(self._lbl_info_sender, 0, 1)
-        eb_layout.addWidget(QLabel("Subjek:"), 1, 0)
+        eb_layout.addWidget(QLabel("Subject:"), 1, 0)
         eb_layout.addWidget(self._lbl_info_subject, 1, 1)
-        eb_layout.addWidget(QLabel("Tanggal:"), 2, 0)
+        eb_layout.addWidget(QLabel("Date:"), 2, 0)
         eb_layout.addWidget(self._lbl_info_date, 2, 1)
         eb_layout.addWidget(QLabel("Email #:"), 3, 0)
         eb_layout.addWidget(self._lbl_info_email_idx, 3, 1)
@@ -854,7 +854,7 @@ class MediaAnalyzerDialog(QDialog):
         act_layout.addWidget(self._btn_extract_one)
 
         self._btn_jump_email = QPushButton("✉️ Jump to Containing Email")
-        self._btn_jump_email.setToolTip("Buka email ini di MBOX Viewer utama")
+        self._btn_jump_email.setToolTip("Open this email in the main MBOX Viewer")
         self._btn_jump_email.clicked.connect(self._on_jump_to_current_email)
         self._btn_jump_email.setEnabled(False)
         act_layout.addWidget(self._btn_jump_email)
@@ -868,7 +868,7 @@ class MediaAnalyzerDialog(QDialog):
         layout = QVBoxLayout(container)
         layout.setContentsMargins(0, 4, 0, 0)
 
-        desc_lbl = QLabel("Tabel di bawah mengurutkan seluruh email dalam file MBOX dari yang paling besar ke paling kecil berdasarkan ukuran aslinya di disk.")
+        desc_lbl = QLabel("The table below ranks all emails in the MBOX file from largest to smallest based on raw disk size.")
         desc_lbl.setStyleSheet("color: #a0aec0; margin: 4px;")
         layout.addWidget(desc_lbl)
 
@@ -921,7 +921,7 @@ class MediaAnalyzerDialog(QDialog):
         if cached_items is not None:
             log.info("MediaAnalyzer: loaded %d items from cache", len(cached_items))
             self._set_media_items(cached_items)
-            self._status_lbl.setText(f"✓ Berhasil dimuat dari cache: {len(cached_items):,} media ({format_size(sum(it.size_bytes for it in cached_items))})")
+            self._status_lbl.setText(f"✓ Loaded from cache: {len(cached_items):,} media files ({format_size(sum(it.size_bytes for it in cached_items))})")
         else:
             self._start_scan()
 
@@ -936,7 +936,7 @@ class MediaAnalyzerDialog(QDialog):
         self._progress_bar.setValue(0)
         self._btn_cancel_scan.setVisible(True)
         self._btn_rescan.setEnabled(False)
-        self._status_lbl.setText("Memulai pemindaian media dalam MBOX…")
+        self._status_lbl.setText("Scanning media attachments across MBOX…")
 
         self._scan_worker = MediaScanWorker(
             parser=self._parser,
@@ -953,7 +953,7 @@ class MediaAnalyzerDialog(QDialog):
     def _cancel_scan(self):
         if self._scan_worker and self._scan_worker.isRunning():
             self._scan_worker.cancel()
-            self._status_lbl.setText("Membatalkan pemindaian…")
+            self._status_lbl.setText("Cancelling scan…")
             self._btn_cancel_scan.setEnabled(False)
 
     def _on_scan_progress(self, current: int, total: int, found: int, total_bytes: int, current_fn: str):
@@ -973,17 +973,17 @@ class MediaAnalyzerDialog(QDialog):
 
         total_bytes = sum(it.size_bytes for it in items)
         if was_cancelled:
-            self._status_lbl.setText(f"Pemindaian dibatalkan. Menampilkan {len(items):,} file ({format_size(total_bytes)})")
+            self._status_lbl.setText(f"Scan cancelled. Showing {len(items):,} files ({format_size(total_bytes)})")
         else:
-            self._status_lbl.setText(f"✓ Pemindaian selesai: {len(items):,} media file ({format_size(total_bytes)}) terindeks.")
+            self._status_lbl.setText(f"✓ Scan completed: {len(items):,} media files ({format_size(total_bytes)}) indexed.")
 
     def _on_scan_error(self, err_msg: str):
         self._progress_bar.setVisible(False)
         self._btn_cancel_scan.setVisible(False)
         self._btn_rescan.setEnabled(True)
         self._scan_worker = None
-        self._status_lbl.setText(f"Kesalahan pemindaian: {err_msg}")
-        QMessageBox.warning(self, "Scan Error", f"Terjadi kesalahan saat memindai media:\n{err_msg}")
+        self._status_lbl.setText(f"Scan error: {err_msg}")
+        QMessageBox.warning(self, "Scan Error", f"An error occurred while scanning media:\n{err_msg}")
 
     def _set_media_items(self, items: list[MediaItem]):
         self._all_items = items
@@ -1122,7 +1122,7 @@ class MediaAnalyzerDialog(QDialog):
             self._display_media_item(item)
 
     def _clear_inspector(self):
-        self._preview_image_lbl.setText("Pilih file untuk pratinjau")
+        self._preview_image_lbl.setText("Select a file to preview")
         self._preview_image_lbl.setPixmap(QPixmap())
         self._btn_open_system.setEnabled(False)
         self._btn_extract_one.setEnabled(False)
@@ -1156,7 +1156,7 @@ class MediaAnalyzerDialog(QDialog):
         # Check preview format
         cat = item.category
         if cat == "Image":
-            self._preview_image_lbl.setText("Memuat pratinjau gambar…")
+            self._preview_image_lbl.setText("Loading image preview…")
             self._preview_image_lbl.setPixmap(QPixmap())
             if self._preview_worker and self._preview_worker.isRunning():
                 self._preview_worker.terminate()
@@ -1167,22 +1167,22 @@ class MediaAnalyzerDialog(QDialog):
         elif cat == "Video":
             self._preview_image_lbl.clear()
             self._preview_image_lbl.setText(
-                f"🎬\n\nVideo File: {item.extension.upper()}\n{item.display_size}\n\nKlik 'Open with Default App' untuk memutar"
+                f"🎬\n\nVideo File: {item.extension.upper()}\n{item.display_size}\n\nClick 'Open with Default App' to play"
             )
         elif cat == "Audio":
             self._preview_image_lbl.clear()
             self._preview_image_lbl.setText(
-                f"🎵\n\nAudio File: {item.extension.upper()}\n{item.display_size}\n\nKlik 'Open with Default App' untuk mendengarkan"
+                f"🎵\n\nAudio File: {item.extension.upper()}\n{item.display_size}\n\nClick 'Open with Default App' to play"
             )
         elif cat == "Archive":
             self._preview_image_lbl.clear()
             self._preview_image_lbl.setText(
-                f"📦\n\nArchive File: {item.extension.upper()}\n{item.display_size}\n\nKlik 'Open with Default App' untuk membuka"
+                f"📦\n\nArchive File: {item.extension.upper()}\n{item.display_size}\n\nClick 'Open with Default App' to open"
             )
         else:
             self._preview_image_lbl.clear()
             self._preview_image_lbl.setText(
-                f"📄\n\n{item.category}: {item.extension.upper()}\n{item.display_size}\n\nKlik 'Open with Default App' untuk membuka"
+                f"📄\n\n{item.category}: {item.extension.upper()}\n{item.display_size}\n\nClick 'Open with Default App' to open"
             )
 
     def _on_image_preview_loaded(self, item: MediaItem, data: bytes):
@@ -1198,11 +1198,11 @@ class MediaAnalyzerDialog(QDialog):
             self._preview_image_lbl.setPixmap(scaled)
             self._preview_image_lbl.setText("")
         else:
-            self._preview_image_lbl.setText(f"🖼️\n{item.filename}\n(Format gambar tidak dapat dirender langsung)")
+            self._preview_image_lbl.setText(f"🖼️\n{item.filename}\n(Image format cannot be rendered directly)")
 
     def _on_image_preview_failed(self, item: MediaItem, err: str):
         if self._current_item == item:
-            self._preview_image_lbl.setText(f"Gagal memuat pratinjau: {err}")
+            self._preview_image_lbl.setText(f"Failed to load preview: {err}")
 
     # -----------------------------------------------------------------------
     # Actions: Open, Extract, Jump
@@ -1227,14 +1227,14 @@ class MediaAnalyzerDialog(QDialog):
             os.startfile(out_path)
         except Exception as exc:
             log.exception("Open in system app failed: %s", exc)
-            QMessageBox.warning(self, "Open Failed", f"Gagal membuka file:\n{exc}")
+            QMessageBox.warning(self, "Open Failed", f"Failed to open file:\n{exc}")
 
     def _on_extract_current(self):
         """Extract currently selected file to user-chosen destination."""
         if not self._current_item:
             return
         item = self._current_item
-        dest_dir = QFileDialog.getExistingDirectory(self, "Pilih Folder Tujuan Ekstraksi")
+        dest_dir = QFileDialog.getExistingDirectory(self, "Select Destination Folder")
         if not dest_dir:
             return
 
@@ -1242,12 +1242,12 @@ class MediaAnalyzerDialog(QDialog):
             saved_path = MediaAnalyzer.extract_single_media(self._parser, item, dest_dir)
             QMessageBox.information(
                 self,
-                "Ekstraksi Berhasil",
-                f"File berhasil disimpan ke:\n{saved_path}",
+                "Extraction Succeeded",
+                f"File saved successfully to:\n{saved_path}",
             )
         except Exception as exc:
             log.exception("Extract single media failed: %s", exc)
-            QMessageBox.critical(self, "Ekstraksi Gagal", f"Gagal menyimpan file:\n{exc}")
+            QMessageBox.critical(self, "Extraction Failed", f"Failed to save file:\n{exc}")
 
     def _on_jump_to_current_email(self):
         """Select containing email in the main window."""
@@ -1313,7 +1313,7 @@ class MediaAnalyzerDialog(QDialog):
     def _on_extract_filtered(self):
         """Batch extract all currently filtered media files with a live progress dialog."""
         if not self._filtered_items:
-            QMessageBox.information(self, "No Files", "Tidak ada file media yang sesuai dengan filter saat ini.")
+            QMessageBox.information(self, "No Files", "No media files match the current filter criteria.")
             return
 
         total_files = len(self._filtered_items)
@@ -1321,24 +1321,24 @@ class MediaAnalyzerDialog(QDialog):
 
         reply = QMessageBox.question(
             self,
-            "Konfirmasi Ekstraksi Massal",
-            f"Anda akan mengekstrak {total_files:,} file ({format_size(total_bytes)}).\n\n"
-            f"Lanjutkan memilih folder tujuan?",
+            "Confirm Batch Extraction",
+            f"You are about to extract {total_files:,} files ({format_size(total_bytes)}).\n\n"
+            f"Proceed to choose destination folder?",
             QMessageBox.Yes | QMessageBox.No,
             QMessageBox.Yes,
         )
         if reply != QMessageBox.Yes:
             return
 
-        dest_dir = QFileDialog.getExistingDirectory(self, "Pilih Folder Tujuan Ekstraksi Massal")
+        dest_dir = QFileDialog.getExistingDirectory(self, "Select Destination Folder for Batch Extraction")
         if not dest_dir:
             return
 
         progress_dlg = QDialog(self)
-        progress_dlg.setWindowTitle("Mengekstrak Media…")
+        progress_dlg.setWindowTitle("Extracting Media…")
         progress_dlg.setFixedSize(450, 140)
         p_layout = QVBoxLayout(progress_dlg)
-        p_lbl = QLabel(f"Menyimpan {total_files:,} file ke {dest_dir}…")
+        p_lbl = QLabel(f"Saving {total_files:,} files to {dest_dir}…")
         p_bar = QProgressBar()
         p_bar.setRange(0, total_files)
         p_bar.setValue(0)
@@ -1359,12 +1359,12 @@ class MediaAnalyzerDialog(QDialog):
 
             if i % 10 == 0 or i == total_files - 1:
                 p_bar.setValue(i + 1)
-                p_lbl.setText(f"Menyimpan ({i + 1}/{total_files}): {it.filename[:35]}…")
+                p_lbl.setText(f"Saving ({i + 1}/{total_files}): {it.filename[:35]}…")
                 QApplication.processEvents()
 
         progress_dlg.close()
 
-        msg = f"Berhasil mengekstrak {saved_count:,} file ke:\n{dest_dir}"
+        msg = f"Successfully extracted {saved_count:,} files to:\n{dest_dir}"
         if errors:
-            msg += f"\n\n({len(errors)} file mengalami kegagalan)"
-        QMessageBox.information(self, "Ekstraksi Selesai", msg)
+            msg += f"\n\n({len(errors)} files failed)"
+        QMessageBox.information(self, "Extraction Finished", msg)

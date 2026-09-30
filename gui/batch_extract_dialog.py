@@ -63,7 +63,7 @@ class BatchExtractDialog(QDialog):
         super().__init__(parent)
         from gui.app_icon import get_app_icon
         self.setWindowIcon(get_app_icon())
-        self.setWindowTitle("⚡ Ekstraksi Massal Lampiran (Batch Attachment Extractor)")
+        self.setWindowTitle("⚡ Batch Attachment Extractor")
         self.resize(760, 720)
         self.setMinimumSize(660, 480)
 
@@ -90,9 +90,9 @@ class BatchExtractDialog(QDialog):
         h_layout.setContentsMargins(2, 0, 2, 2)
         h_layout.setSpacing(2)
 
-        title_lbl = QLabel("⚡ Ekstraksi Massal Lampiran")
+        title_lbl = QLabel("⚡ Batch Attachment Extractor")
         title_lbl.setStyleSheet("font-size: 14pt; font-weight: bold; color: #dde8ff;")
-        sub_lbl = QLabel("Ekstrak ribuan file lampiran dari file MBOX secara cepat dan hemat RAM.")
+        sub_lbl = QLabel("Extract thousands of attachments from MBOX files quickly with minimal RAM usage.")
         sub_lbl.setStyleSheet("color: #8898b8; font-size: 9.5pt;")
 
         h_layout.addWidget(title_lbl)
@@ -116,16 +116,16 @@ class BatchExtractDialog(QDialog):
         content_layout.setSpacing(12)
 
         # --- Card 1: Scope Group ---
-        scope_group = QGroupBox("1. Cakupan Email yang Diproses")
+        scope_group = QGroupBox("1. Email Processing Scope")
         scope_layout = QVBoxLayout(scope_group)
         scope_layout.setContentsMargins(14, 14, 14, 10)
         scope_layout.setSpacing(6)
 
         self._scope_bg = QButtonGroup(self)
 
-        self._rb_scope_all = QRadioButton(f"Semua email dalam MBOX ({len(self._all_records):,} email)")
-        self._rb_scope_filtered = QRadioButton(f"Email hasil pencarian / filter ({len(self._filtered_records):,} email)")
-        self._rb_scope_selected = QRadioButton(f"Hanya email terpilih di daftar ({len(self._selected_records):,} email)")
+        self._rb_scope_all = QRadioButton(f"All emails in MBOX ({len(self._all_records):,} emails)")
+        self._rb_scope_filtered = QRadioButton(f"Filtered search results ({len(self._filtered_records):,} emails)")
+        self._rb_scope_selected = QRadioButton(f"Selected emails only ({len(self._selected_records):,} emails)")
 
         self._scope_bg.addButton(self._rb_scope_all, 0)
         self._scope_bg.addButton(self._rb_scope_filtered, 1)
@@ -149,12 +149,12 @@ class BatchExtractDialog(QDialog):
         content_layout.addWidget(scope_group)
 
         # --- Card 2: Filter Extensions Group ---
-        ext_group = QGroupBox("2. Filter Jenis File Lampiran")
+        ext_group = QGroupBox("2. Attachment File Type Filters")
         ext_layout = QVBoxLayout(ext_group)
         ext_layout.setContentsMargins(14, 14, 14, 10)
         ext_layout.setSpacing(8)
 
-        self._cb_all_types = QCheckBox("Semua jenis file (*.*)")
+        self._cb_all_types = QCheckBox("All file types (*.*)")
         self._cb_all_types.setChecked(True)
         self._cb_all_types.toggled.connect(self._on_all_types_toggled)
         ext_layout.addWidget(self._cb_all_types)
@@ -163,9 +163,9 @@ class BatchExtractDialog(QDialog):
         grid.setHorizontalSpacing(24)
         grid.setVerticalSpacing(6)
 
-        self._cb_doc = QCheckBox("📄 Dokumen (PDF, Word, Excel, PPT, TXT)")
-        self._cb_img = QCheckBox("🖼️ Gambar (JPG, PNG, GIF, WEBP)")
-        self._cb_archive = QCheckBox("📦 Arsip (ZIP, RAR, 7Z, TAR)")
+        self._cb_doc = QCheckBox("📄 Documents (PDF, Word, Excel, PPT, TXT)")
+        self._cb_img = QCheckBox("🖼️ Images (JPG, PNG, GIF, WEBP)")
+        self._cb_archive = QCheckBox("📦 Archives (ZIP, RAR, 7Z, TAR)")
         self._cb_media = QCheckBox("🎵 Media (MP4, MP3, WAV, M4A)")
 
         grid.addWidget(self._cb_doc, 0, 0)
@@ -176,10 +176,10 @@ class BatchExtractDialog(QDialog):
 
         custom_row = QHBoxLayout()
         custom_row.setSpacing(10)
-        custom_lbl = QLabel("Ekstensi Khusus:")
+        custom_lbl = QLabel("Custom Extensions:")
         custom_lbl.setStyleSheet("color: #a0aec0; font-size: 9.5pt;")
         self._le_custom_ext = QLineEdit()
-        self._le_custom_ext.setPlaceholderText("Contoh: .pdf, .zip, .xlsx (pisahkan dengan koma)")
+        self._le_custom_ext.setPlaceholderText("e.g., .pdf, .zip, .xlsx (comma separated)")
         custom_row.addWidget(custom_lbl)
         custom_row.addWidget(self._le_custom_ext, 1)
         ext_layout.addLayout(custom_row)
@@ -187,27 +187,27 @@ class BatchExtractDialog(QDialog):
         content_layout.addWidget(ext_group)
 
         # --- Card 3: Folder Organization & Duplicate Group ---
-        org_group = QGroupBox("3. Struktur Folder dan Duplikasi")
+        org_group = QGroupBox("3. Folder Structure & Duplicates")
         org_layout = QGridLayout(org_group)
         org_layout.setContentsMargins(14, 14, 14, 10)
         org_layout.setHorizontalSpacing(24)
         org_layout.setVerticalSpacing(6)
 
-        lbl_org = QLabel("Struktur Folder:")
+        lbl_org = QLabel("Folder Structure:")
         lbl_org.setStyleSheet("font-weight: 600; color: #a0aec0;")
         self._combo_org = QComboBox()
-        self._combo_org.addItem("Flat (Semua file di satu folder)", "flat")
-        self._combo_org.addItem("Per Email (Folder: Tanggal_Subjek)", "by_email")
-        self._combo_org.addItem("Per Pengirim (Folder: email/nama)", "by_sender")
-        self._combo_org.addItem("Per Periode (Folder: YYYY-MM)", "by_date")
-        self._combo_org.addItem("Per Kategori Tipe (Folder: PDF, ZIP, dll)", "by_type")
+        self._combo_org.addItem("Flat (All files in one folder)", "flat")
+        self._combo_org.addItem("Per Email (Folder: Date_Subject)", "by_email")
+        self._combo_org.addItem("Per Sender (Folder: sender_email)", "by_sender")
+        self._combo_org.addItem("Per Period (Folder: YYYY-MM)", "by_date")
+        self._combo_org.addItem("Per Category (Folder: PDF, ZIP, etc)", "by_type")
 
-        lbl_dup = QLabel("Jika File Sudah Ada:")
+        lbl_dup = QLabel("If File Already Exists:")
         lbl_dup.setStyleSheet("font-weight: 600; color: #a0aec0;")
         self._combo_dup = QComboBox()
-        self._combo_dup.addItem("Otomatis Beri Nomor: nama (1).ext", "rename")
-        self._combo_dup.addItem("Lewati (Skip)", "skip")
-        self._combo_dup.addItem("Timpa (Overwrite)", "overwrite")
+        self._combo_dup.addItem("Auto-number: name (1).ext", "rename")
+        self._combo_dup.addItem("Skip existing files", "skip")
+        self._combo_dup.addItem("Overwrite existing files", "overwrite")
 
         org_layout.addWidget(lbl_org, 0, 0)
         org_layout.addWidget(lbl_dup, 0, 1)
@@ -217,13 +217,13 @@ class BatchExtractDialog(QDialog):
         content_layout.addWidget(org_group)
 
         # --- Card 4: Destination Folder ---
-        dest_group = QGroupBox("4. Folder Penyimpanan Hasil")
+        dest_group = QGroupBox("4. Output Destination Folder")
         dest_layout = QHBoxLayout(dest_group)
         dest_layout.setContentsMargins(14, 14, 14, 10)
         dest_layout.setSpacing(10)
 
         self._le_dest = QLineEdit(self._output_dir)
-        self._btn_browse = QPushButton("📁 Pilih Folder…")
+        self._btn_browse = QPushButton("📁 Browse Folder…")
         self._btn_browse.setFixedWidth(130)
         self._btn_browse.clicked.connect(self._on_browse_dest)
 
@@ -232,7 +232,7 @@ class BatchExtractDialog(QDialog):
         content_layout.addWidget(dest_group)
 
         # --- Card 5: Progress and Live Log ---
-        prog_group = QGroupBox("5. Progres Ekstraksi")
+        prog_group = QGroupBox("5. Extraction Progress")
         prog_layout = QVBoxLayout(prog_group)
         prog_layout.setContentsMargins(14, 14, 14, 10)
         prog_layout.setSpacing(8)
@@ -249,9 +249,9 @@ class BatchExtractDialog(QDialog):
 
         self._lbl_stat_emails = QLabel("Email: 0 / 0")
         self._lbl_stat_emails.setStyleSheet("font-weight: 600; color: #90a4ae;")
-        self._lbl_stat_files = QLabel("File tersimpan: 0")
+        self._lbl_stat_files = QLabel("Saved files: 0")
         self._lbl_stat_files.setStyleSheet("font-weight: 600; color: #81c784;")
-        self._lbl_stat_bytes = QLabel("Total ukuran: 0 B")
+        self._lbl_stat_bytes = QLabel("Total size: 0 B")
         self._lbl_stat_bytes.setStyleSheet("font-weight: 600; color: #64b5f6;")
 
         stats_layout.addWidget(self._lbl_stat_emails)
@@ -260,7 +260,7 @@ class BatchExtractDialog(QDialog):
         stats_layout.addStretch()
         prog_layout.addLayout(stats_layout)
 
-        self._lbl_current_file = QLabel("Siap memulai ekstraksi.")
+        self._lbl_current_file = QLabel("Ready to begin extraction.")
         self._lbl_current_file.setStyleSheet("color: #78909c; font-size: 9pt;")
         prog_layout.addWidget(self._lbl_current_file)
 
@@ -280,19 +280,19 @@ class BatchExtractDialog(QDialog):
         btn_layout.setContentsMargins(2, 4, 2, 0)
         btn_layout.setSpacing(10)
 
-        self._btn_open_folder = QPushButton("📂 Buka Folder Hasil")
+        self._btn_open_folder = QPushButton("📂 Open Destination Folder")
         self._btn_open_folder.setEnabled(False)
         self._btn_open_folder.clicked.connect(self._on_open_dest_folder)
         btn_layout.addWidget(self._btn_open_folder)
 
         btn_layout.addStretch()
 
-        self._btn_cancel = QPushButton("⏹️ Batal / Stop")
+        self._btn_cancel = QPushButton("⏹️ Cancel / Stop")
         self._btn_cancel.setEnabled(False)
         self._btn_cancel.clicked.connect(self._on_cancel)
         btn_layout.addWidget(self._btn_cancel)
 
-        self._btn_start = QPushButton("🚀 Mulai Ekstrak")
+        self._btn_start = QPushButton("🚀 Start Extraction")
         self._btn_start.setStyleSheet(
             "font-weight: bold; font-size: 10pt; padding: 7px 22px;"
             "background-color: #2b52ba; border-color: #4070e0; color: #ffffff;"
@@ -300,7 +300,7 @@ class BatchExtractDialog(QDialog):
         self._btn_start.clicked.connect(self._on_start)
         btn_layout.addWidget(self._btn_start)
 
-        self._btn_close = QPushButton("Tutup")
+        self._btn_close = QPushButton("Close")
         self._btn_close.clicked.connect(self.close)
         btn_layout.addWidget(self._btn_close)
 
@@ -316,21 +316,21 @@ class BatchExtractDialog(QDialog):
     def _update_scope_counts(self):
         att_all = sum(1 for r in self._all_records if r.has_attachments or r.attachment_count > 0)
         self._rb_scope_all.setText(
-            f"Semua email dalam MBOX ({len(self._all_records):,} email, ~{att_all:,} dengan lampiran)"
+            f"All emails in MBOX ({len(self._all_records):,} emails, ~{att_all:,} with attachments)"
         )
         if self._filtered_records:
             att_filt = sum(1 for r in self._filtered_records if r.has_attachments or r.attachment_count > 0)
             self._rb_scope_filtered.setText(
-                f"Email hasil filter ({len(self._filtered_records):,} email, ~{att_filt:,} dengan lampiran)"
+                f"Filtered search results ({len(self._filtered_records):,} emails, ~{att_filt:,} with attachments)"
             )
         if self._selected_records:
             att_sel = sum(1 for r in self._selected_records if r.has_attachments or r.attachment_count > 0)
             self._rb_scope_selected.setText(
-                f"Email terpilih di tabel ({len(self._selected_records):,} email, ~{att_sel:,} dengan lampiran)"
+                f"Selected emails in table ({len(self._selected_records):,} emails, ~{att_sel:,} with attachments)"
             )
 
     def _on_browse_dest(self):
-        dir_path = QFileDialog.getExistingDirectory(self, "Pilih Folder Tujuan Ekstraksi", self._le_dest.text())
+        dir_path = QFileDialog.getExistingDirectory(self, "Select Destination Folder", self._le_dest.text())
         if dir_path:
             self._le_dest.setText(dir_path)
             self._settings.set("last_export_dir", dir_path)
@@ -369,7 +369,7 @@ class BatchExtractDialog(QDialog):
     def _on_start(self):
         dest_dir = self._le_dest.text().strip()
         if not dest_dir:
-            QMessageBox.warning(self, "Folder Tujuan Kosong", "Silakan pilih folder tujuan ekstraksi terlebih dahulu.")
+            QMessageBox.warning(self, "Empty Destination Folder", "Please select a destination folder first.")
             return
 
         os.makedirs(dest_dir, exist_ok=True)
@@ -377,7 +377,7 @@ class BatchExtractDialog(QDialog):
 
         records = self._get_target_records()
         if not records:
-            QMessageBox.warning(self, "Tidak Ada Email", "Tidak ada email yang terpilih untuk diproses.")
+            QMessageBox.warning(self, "No Emails Selected", "There are no emails selected to process.")
             return
 
         allowed_exts = self._get_allowed_extensions()
@@ -398,9 +398,9 @@ class BatchExtractDialog(QDialog):
         self._progress_bar.setRange(0, total_estimate)
         self._progress_bar.setValue(0)
         self._lbl_stat_emails.setText(f"Email: 0 / {total_estimate:,}")
-        self._lbl_stat_files.setText("File tersimpan: 0")
-        self._lbl_stat_bytes.setText("Total ukuran: 0 B")
-        self._lbl_current_file.setText("Memulai proses ekstraksi...")
+        self._lbl_stat_files.setText("Files saved: 0")
+        self._lbl_stat_bytes.setText("Total size: 0 B")
+        self._lbl_current_file.setText("Starting extraction process...")
 
         self._worker = ExportWorker(
             self._parser,
@@ -422,8 +422,8 @@ class BatchExtractDialog(QDialog):
         from gui.animations import animate_progress_bar
         animate_progress_bar(self._progress_bar, current_email, duration=120)
         self._lbl_stat_emails.setText(f"Email: {current_email:,} / {total_emails:,}")
-        self._lbl_stat_files.setText(f"File tersimpan: {files_saved:,}")
-        self._lbl_stat_bytes.setText(f"Total ukuran: {format_size(total_bytes)}")
+        self._lbl_stat_files.setText(f"Saved files: {files_saved:,}")
+        self._lbl_stat_bytes.setText(f"Total size: {format_size(total_bytes)}")
         if filename:
             self._lbl_current_file.setText(f"Menyimpan: {filename}")
             self._log_list.addItem(f"✓ {filename} ({format_size(file_bytes)})")
@@ -431,37 +431,37 @@ class BatchExtractDialog(QDialog):
 
     def _on_worker_finished(self, files_saved: int, total_bytes: int, errors: list, was_cancelled: bool):
         self._progress_bar.setValue(self._progress_bar.maximum())
-        self._lbl_stat_bytes.setText(f"Total ukuran: {format_size(total_bytes)}")
+        self._lbl_stat_bytes.setText(f"Total size: {format_size(total_bytes)}")
         self._btn_start.setEnabled(True)
         self._btn_cancel.setEnabled(False)
         self._btn_close.setEnabled(True)
         self._btn_browse.setEnabled(True)
         self._btn_open_folder.setEnabled(True)
 
-        status_text = "⚠️ Dibatalkan oleh pengguna." if was_cancelled else "✅ Ekstraksi Selesai!"
+        status_text = "⚠️ Cancelled by user." if was_cancelled else "✅ Extraction Completed!"
         self._lbl_current_file.setText(status_text)
         from gui.animations import pulse_widget, fade_in
         pulse_widget(self._lbl_current_file, min_opacity=0.5, max_opacity=1.0, duration=400)
         fade_in(self._btn_open_folder, duration=200)
 
         msg = (
-            f"Proses selesai!\n\n"
-            f"• File berhasil diekstrak: {files_saved:,}\n"
-            f"• Total ukuran data: {format_size(total_bytes)}\n"
-            f"• Lokasi folder: {self._le_dest.text()}"
+            f"Extraction completed!\n\n"
+            f"• Files saved: {files_saved:,}\n"
+            f"• Total data extracted: {format_size(total_bytes)}\n"
+            f"• Destination folder: {self._le_dest.text()}"
         )
         if errors:
-            msg += f"\n\nCatatan: {len(errors)} kendala tercatat."
+            msg += f"\n\nNote: {len(errors)} errors encountered."
 
-        QMessageBox.information(self, "Ekstraksi Selesai", msg)
+        QMessageBox.information(self, "Extraction Finished", msg)
 
     def _on_worker_error(self, err_msg: str):
         self._btn_start.setEnabled(True)
         self._btn_cancel.setEnabled(False)
         self._btn_close.setEnabled(True)
         self._btn_browse.setEnabled(True)
-        self._lbl_current_file.setText(f"❌ Terjadi kesalahan: {err_msg}")
-        QMessageBox.critical(self, "Gagal Ekstraksi", err_msg)
+        self._lbl_current_file.setText(f"❌ Error occurred: {err_msg}")
+        QMessageBox.critical(self, "Extraction Failed", err_msg)
 
     def _on_cancel(self):
         if self._worker and self._worker.isRunning():
@@ -482,8 +482,8 @@ class BatchExtractDialog(QDialog):
         if self._worker and self._worker.isRunning():
             reply = QMessageBox.question(
                 self,
-                "Batalkan Ekstraksi?",
-                "Proses ekstraksi sedang berjalan. Yakin ingin membatalkan?",
+                "Cancel Extraction?",
+                "Extraction is currently in progress. Are you sure you want to cancel?",
                 QMessageBox.Yes | QMessageBox.No,
             )
             if reply == QMessageBox.Yes:
