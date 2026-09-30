@@ -1,6 +1,6 @@
 @echo off
 setlocal
-title MBOX Viewer - Build Release Package
+title MBOX Viewer - Build & Publish Release Package
 cd /d "%~dp0"
 
 echo ========================================================
@@ -16,5 +16,17 @@ if errorlevel 1 (
 )
 
 echo.
-echo Build complete! The release ZIP is ready to be uploaded to GitHub Releases.
+set /p PUBLISH="Do you want to automatically publish this release to GitHub? (y/n): "
+if /i "%PUBLISH%"=="y" (
+    echo.
+    python publish_release.py
+    if errorlevel 1 (
+        echo.
+        echo [ERROR] Failed to publish release to GitHub.
+        pause
+        exit /b 1
+    )
+)
+
+echo.
 pause
