@@ -1,0 +1,77 @@
+# ==========================================
+# MBOX & Takeout Archive Files (CRITICAL!)
+# DO NOT COMMIT PRIVATE EMAILS OR GB-SIZED ARCHIVES
+# ==========================================
+*.mbox
+*.mbox.gz
+*.mbox.zip
+*.idx
+.*.idx
+*.media.json
+.*.media.json
+
+# Takeout directories
+Takeout/
+takeout/
+Mail/
+
+# Extracted attachments & exported emails
+extracted/
+output/
+temp/
+exports/
+*.eml
+
+# Python cache & compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env
+ENV/
+env.bak/
+venv.bak/
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+Thumbs.db
+Desktop.ini
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+
+# Test artifacts
+__test_runner*
+.__test_runner*
