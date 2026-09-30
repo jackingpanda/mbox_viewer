@@ -64,6 +64,7 @@ from PySide6.QtWidgets import (
     QPushButton,
     QScrollArea,
     QSplitter,
+    QStyle,
     QStyledItemDelegate,
     QStyleOptionViewItem,
     QTabWidget,
@@ -102,7 +103,7 @@ class PercentageBarDelegate(QStyledItemDelegate):
         self.initStyleOption(opt, index)
 
         # Draw standard item background / selection
-        if opt.state & opt.State_Selected:
+        if opt.state & QStyle.StateFlag.State_Selected:
             painter.fillRect(option.rect, opt.palette.highlight())
 
         # Retrieve percentage (0.0 to 100.0) and category color
@@ -115,7 +116,7 @@ class PercentageBarDelegate(QStyledItemDelegate):
             bar_w = int(rect.width() * fill_pct)
 
             c = QColor(color_hex) if color_hex else QColor(139, 92, 246)
-            c.setAlpha(120 if not (opt.state & opt.State_Selected) else 180)
+            c.setAlpha(120 if not (opt.state & QStyle.StateFlag.State_Selected) else 180)
             painter.setBrush(c)
             painter.setPen(Qt.NoPen)
             painter.drawRoundedRect(QRect(rect.left(), rect.top(), max(bar_w, 3), rect.height()), 3, 3)
@@ -123,7 +124,7 @@ class PercentageBarDelegate(QStyledItemDelegate):
         # Draw text on top
         text = opt.text
         if text:
-            text_color = opt.palette.highlightedText().color() if (opt.state & opt.State_Selected) else opt.palette.text().color()
+            text_color = opt.palette.highlightedText().color() if (opt.state & QStyle.StateFlag.State_Selected) else opt.palette.text().color()
             painter.setPen(text_color)
             painter.drawText(option.rect.adjusted(8, 0, -8, 0), Qt.AlignVCenter | Qt.AlignLeft, text)
 
@@ -755,7 +756,7 @@ class MediaAnalyzerDialog(QDialog):
         # Preview Container (Image / Video Player Card)
         self._preview_card = QFrame()
         self._preview_card.setFrameShape(QFrame.StyledPanel)
-        self._preview_card.setStyleSheet("background-color: #1a1e29; border-radius: 6px;")
+        self._preview_card.setStyleSheet("QFrame { background-color: #1a1e29; border-radius: 6px; border: 1px solid #2d3748; }")
         self._preview_card.setMinimumHeight(180)
         self._preview_card.setMaximumHeight(220)
 
@@ -766,7 +767,7 @@ class MediaAnalyzerDialog(QDialog):
         self._preview_image_lbl = QLabel("Pilih file untuk pratinjau")
         self._preview_image_lbl.setAlignment(Qt.AlignCenter)
         self._preview_image_lbl.setWordWrap(True)
-        self._preview_image_lbl.setStyleSheet("color: #718096;")
+        self._preview_image_lbl.setStyleSheet("color: #e2e8f0; font-size: 11pt;")
         pc_layout.addWidget(self._preview_image_lbl)
 
         layout.addWidget(self._preview_card)
@@ -1164,25 +1165,25 @@ class MediaAnalyzerDialog(QDialog):
             self._preview_worker.failed.connect(self._on_image_preview_failed)
             self._preview_worker.start()
         elif cat == "Video":
+            self._preview_image_lbl.clear()
             self._preview_image_lbl.setText(
                 f"🎬\n\nVideo File: {item.extension.upper()}\n{item.display_size}\n\nKlik 'Open with Default App' untuk memutar"
             )
-            self._preview_image_lbl.setPixmap(QPixmap())
         elif cat == "Audio":
+            self._preview_image_lbl.clear()
             self._preview_image_lbl.setText(
                 f"🎵\n\nAudio File: {item.extension.upper()}\n{item.display_size}\n\nKlik 'Open with Default App' untuk mendengarkan"
             )
-            self._preview_image_lbl.setPixmap(QPixmap())
         elif cat == "Archive":
+            self._preview_image_lbl.clear()
             self._preview_image_lbl.setText(
                 f"📦\n\nArchive File: {item.extension.upper()}\n{item.display_size}\n\nKlik 'Open with Default App' untuk membuka"
             )
-            self._preview_image_lbl.setPixmap(QPixmap())
         else:
+            self._preview_image_lbl.clear()
             self._preview_image_lbl.setText(
                 f"📄\n\n{item.category}: {item.extension.upper()}\n{item.display_size}\n\nKlik 'Open with Default App' untuk membuka"
             )
-            self._preview_image_lbl.setPixmap(QPixmap())
 
     def _on_image_preview_loaded(self, item: MediaItem, data: bytes):
         if self._current_item != item:

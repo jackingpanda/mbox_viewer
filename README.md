@@ -1,3 +1,7 @@
+<div align="center">
+
+<img src="assets/icon.png" width="128" height="128" alt="MBOX Viewer Logo" style="border-radius: 24px;" />
+
 # 📬 MBOX Viewer
 
 > **A high-performance, modern, and lightweight desktop application for opening, searching, batch-extracting attachments, and analyzing storage consumption from Google Takeout (`.mbox`) email archives.**
@@ -8,6 +12,8 @@
 [![Release Version](https://img.shields.io/badge/Version-1.3.0-orange.svg)](CHANGELOG.md)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)](#-system-requirements--installation)
 [![Test Suite](https://img.shields.io/badge/Tests-55%2F55%20Passed%20(100%25)-brightgreen.svg)](#-automated-unit-testing)
+
+</div>
 
 ---
 
@@ -22,10 +28,11 @@
 ## 📑 Table of Contents
 
 1. [About the Project & Problem Statement](#-about-the-project)
-2. [Key Features](#-key-features)
-3. [System Requirements & Installation](#-system-requirements--installation)
-4. [How to Launch the Application](#-how-to-launch-the-application)
-5. [Comprehensive Feature Guide & Tutorials](#-comprehensive-feature-guide--tutorials)
+2. [Visual Showcase & Screenshots](#-visual-showcase)
+3. [Key Features](#-key-features)
+4. [System Requirements & Installation](#-system-requirements--installation)
+5. [How to Launch the Application](#-how-to-launch-the-application)
+6. [Comprehensive Feature Guide & Tutorials](#-comprehensive-feature-guide--tutorials)
    - [1. Welcome & Quick Launch Screen](#1-welcome--quick-launch-screen)
    - [2. Email Viewer & Multi-View Inspection](#2-email-viewer--multi-view-inspection)
    - [3. Advanced Search & Filtering](#3-advanced-search--filtering)
@@ -33,13 +40,13 @@
    - [5. Batch Attachment Extractor](#5-batch-attachment-extractor)
    - [6. Exporting to .eml Format](#6-exporting-to-eml-format)
    - [7. Dark & Light Theme Switching](#7-dark--light-theme-switching)
-6. [Keyboard Shortcuts](#-keyboard-shortcuts)
-7. [Step-by-Step Guide: Exporting from Google Takeout](#-step-by-step-guide-exporting-from-google-takeout)
-8. [GitHub & GitHub Desktop Workflow Guide (Push & Pull)](#-github--github-desktop-workflow-guide-push--pull)
-9. [Project Architecture & Directory Structure](#-project-architecture--directory-structure)
-10. [Automated Unit Testing](#-automated-unit-testing)
-11. [Troubleshooting & FAQ](#-troubleshooting--faq)
-12. [License](#-license)
+7. [Keyboard Shortcuts](#-keyboard-shortcuts)
+8. [Step-by-Step Guide: Exporting from Google Takeout](#-step-by-step-guide-exporting-from-google-takeout)
+9. [GitHub & GitHub Desktop Workflow Guide (Push & Pull)](#-github--github-desktop-workflow-guide-push--pull)
+10. [Project Architecture & Directory Structure](#-project-architecture--directory-structure)
+11. [Automated Unit Testing](#-automated-unit-testing)
+12. [Troubleshooting & FAQ](#-troubleshooting--faq)
+13. [License](#-license)
 
 ---
 
@@ -58,6 +65,46 @@ When exporting your Gmail mailbox via **Google Takeout**, you receive a massive 
 - **Ultra-Compact Binary Index Cache (`.idx`):** Re-opening an 8.8 GB archive takes **under 0.05 seconds** with **under 80 MB of RAM usage**.
 - **Media & Storage Analyzer:** Visually breaks down disk space across categories (Video, Images, Archives, Documents, Audio) and ranks files from largest to smallest.
 - **Multi-Threaded Batch Extractor:** Efficiently extracts thousands of attachments with customizable folder structures, duplicate handling, and real-time throughput metrics.
+
+---
+
+## 🖼️ Visual Showcase
+
+### 1. Main Email Explorer with Rich HTML & Attachment Inspection
+*Browse tens of thousands of messages with sub-second keyword search, Gmail label badges, instant multi-view rendering (HTML, Plain Text, Raw Headers), and quick attachment downloads.*
+
+<p align="center">
+  <img src="assets/screenshots/main_explorer.png" width="96%" alt="MBOX Viewer Main Explorer" />
+</p>
+
+---
+
+### 2. Welcome Hub & Quick Launch Launcher
+*Clean launchpad with automatic Takeout detection, instant one-click opening, keyboard shortcuts, and drag-and-drop file ingestion.*
+
+<p align="center">
+  <img src="assets/screenshots/welcome_hub.png" width="96%" alt="Welcome Hub Screen" />
+</p>
+
+---
+
+### 3. Storage & Media Analyzer (Rank Largest to Smallest)
+*Interactive multi-color storage distribution bar, real-time category filtering (Videos, Images, Archives, Documents, Audio), percentage bars in table cells, and full-featured media inspector panel.*
+
+<p align="center">
+  <img src="assets/screenshots/storage_analyzer.png" width="96%" alt="MBOX Storage & Media Analyzer" />
+</p>
+
+---
+
+### 4. Batch Attachment Extractor & Statistics Dashboard
+*High-throughput multi-threaded attachment extractor with category filters, duplicate auto-renaming, and comprehensive yearly archive statistics.*
+
+<p align="center">
+  <img src="assets/screenshots/batch_extractor.png" width="49%" alt="Batch Attachment Extractor" />
+  &nbsp;
+  <img src="assets/screenshots/email_statistics.png" width="46%" alt="Email Archive Statistics" />
+</p>
 
 ---
 
