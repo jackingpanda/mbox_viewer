@@ -129,7 +129,7 @@ class HoverCardFilter(QObject):
     Uses safe animation lifecycle without DeleteWhenStopped to prevent RuntimeError.
     """
 
-    def __init__(self, target_widget: QWidget, lift_px: int = 3, parent: Optional[QObject] = None):
+    def __init__(self, target_widget: QWidget, lift_px: int = 2, parent: Optional[QObject] = None):
         super().__init__(parent or target_widget)
         self._target = target_widget
         self._lift_px = lift_px

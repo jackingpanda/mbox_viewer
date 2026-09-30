@@ -346,11 +346,11 @@ class MainWindow(QMainWindow):
 
         layout.addWidget(hero)
 
-        # Cards container (max width 760)
+        # Cards container (max width 772 with headroom margins to avoid border clipping)
         cards_widget = QWidget()
-        cards_widget.setMaximumWidth(760)
+        cards_widget.setMaximumWidth(772)
         cards_layout = QVBoxLayout(cards_widget)
-        cards_layout.setContentsMargins(0, 0, 0, 0)
+        cards_layout.setContentsMargins(6, 8, 6, 8)
         cards_layout.setSpacing(14)
 
         # Check default Takeout existence
@@ -435,7 +435,7 @@ class MainWindow(QMainWindow):
         # Card 3 & 4 row (Grid)
         c_grid = QWidget()
         g_layout = QHBoxLayout(c_grid)
-        g_layout.setContentsMargins(0, 0, 0, 0)
+        g_layout.setContentsMargins(0, 4, 0, 4)
         g_layout.setSpacing(14)
 
         # Card 3: Storage & Media Analyzer
@@ -497,7 +497,7 @@ class MainWindow(QMainWindow):
 
         # Attach smooth hover lift filter to all cards
         for card in (c1, c2, c3, c4, drop_card):
-            HoverCardFilter(card, lift_px=3)
+            HoverCardFilter(card, lift_px=2)
 
         # Soft entrance fade-in
         fade_in(cards_widget, duration=240)
