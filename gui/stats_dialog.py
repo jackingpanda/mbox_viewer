@@ -11,6 +11,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QDialog,
     QDialogButtonBox,
+    QFrame,
     QGridLayout,
     QGroupBox,
     QLabel,
@@ -30,6 +31,8 @@ class StatsDialog(QDialog):
 
     def __init__(self, records: list[EmailRecord], file_size: int = 0, parent=None):
         super().__init__(parent)
+        from gui.app_icon import get_app_icon
+        self.setWindowIcon(get_app_icon())
         self.setWindowTitle("📊 Email Statistics")
         self.setMinimumSize(560, 500)
         self.setObjectName("StatsDialog")
@@ -47,7 +50,7 @@ class StatsDialog(QDialog):
 
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
-        scroll.setFrameShape(scroll.NoFrame)
+        scroll.setFrameShape(QFrame.NoFrame)
 
         container = QWidget()
         c_layout = QVBoxLayout(container)

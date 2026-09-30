@@ -462,6 +462,8 @@ class MediaAnalyzerDialog(QDialog):
         parent=None,
     ):
         super().__init__(parent)
+        from gui.app_icon import get_app_icon
+        self.setWindowIcon(get_app_icon())
         self.setWindowTitle("📊 MBOX Storage & Media Analyzer — Urutkan File Terbesar ke Terkecil")
         self.resize(1240, 780)
         self.setMinimumSize(980, 600)

@@ -49,6 +49,7 @@ from utils.constants import (
 from utils.helpers import format_size
 from utils.settings import AppSettings
 from gui.animations import cross_fade_stacked, fade_in, HoverCardFilter, pulse_widget
+from gui.app_icon import get_app_icon, get_app_pixmap
 from workers.body_worker import BodyWorker
 from workers.export_worker import ExportWorker
 from workers.parse_worker import ParseWorker
@@ -96,6 +97,7 @@ class MainWindow(QMainWindow):
 
     def _build_ui(self):
         self.setWindowTitle("MBOX Viewer")
+        self.setWindowIcon(get_app_icon())
         self.setMinimumSize(960, 640)
         self._build_menu()
         self._build_toolbar()
@@ -327,7 +329,12 @@ class MainWindow(QMainWindow):
         hero_layout.setSpacing(6)
         hero_layout.setAlignment(Qt.AlignCenter)
 
-        title_lbl = QLabel(f"📬 {APP_NAME} <span style='font-size: 11pt; color: #3b82f6; font-weight: normal;'>v{APP_VERSION}</span>")
+        icon_lbl = QLabel()
+        icon_lbl.setPixmap(get_app_pixmap(64))
+        icon_lbl.setAlignment(Qt.AlignCenter)
+        hero_layout.addWidget(icon_lbl)
+
+        title_lbl = QLabel(f"{APP_NAME} <span style='font-size: 11pt; color: #3b82f6; font-weight: normal;'>v{APP_VERSION}</span>")
         title_lbl.setStyleSheet("font-size: 26pt; font-weight: bold;")
         title_lbl.setAlignment(Qt.AlignCenter)
         hero_layout.addWidget(title_lbl)

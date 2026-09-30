@@ -61,6 +61,8 @@ class BatchExtractDialog(QDialog):
         parent=None,
     ):
         super().__init__(parent)
+        from gui.app_icon import get_app_icon
+        self.setWindowIcon(get_app_icon())
         self.setWindowTitle("⚡ Ekstraksi Massal Lampiran (Batch Attachment Extractor)")
         self.resize(760, 720)
         self.setMinimumSize(660, 480)
