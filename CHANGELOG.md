@@ -1,173 +1,151 @@
 # 📋 Changelog — MBOX Viewer
 
-Semua perubahan, penambahan fitur, peningkatan performa, dan perbaikan bug pada proyek **MBOX Viewer** didokumentasikan di sini.
+All notable changes, new features, performance optimizations, and bug fixes for the **MBOX Viewer** project are documented in this file.
 
-Format penulisan changelog ini mengacu pada standar [Keep a Changelog](https://keepachangelog.com/id-ID/1.0.0/) dan mengikuti kaidah [Semantic Versioning](https://semver.org/lang/id/).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
 ## [1.3.0] — 2026-09-30
 
-### ✨ Added (Sistem Mikro-Animasi Elegan & Responsif)
-- **Modul Animasi Asinkron (`gui/animations.py`)**:
-  - Dibuat helper animasi natif PySide6 berbasis `QPropertyAnimation`, `QGraphicsOpacityEffect`, dan kurva perlambatan alami (`QEasingCurve.OutCubic` / `InOutQuad`) tanpa dependensi eksternal.
-  - Berjalan non-blocking di main thread, terisolasi penuh dari thread parser mbox sehingga **zero-lag** pada arsip 9GB+.
-- **Animasi Welcome & Launcher Screen**:
-  - *Hover Lift Effect*: Kartu menu aksi (`[1]`, `[2]`, `[3]`, `[4]` dan area drop) terangkat mulus 3px ke atas saat diarahkan kursor mouse.
-  - *Soft Entrance Fade*: Kartu menu memudar masuk lembut saat pertama kali membuka aplikasi.
-  - *Breathing Pulse Drop Zone*: Kotak drop-zone berdenyut lembut saat mendeteksi file `.mbox` diseret di atas jendela.
-- **Transisi Antar Layar Mulus (Cross-Fade Stacked Views)**:
-  - Transisi antara Welcome Screen dan Workspace (Tabel Email) berganti dengan efek *cross-fade* lembut saat membuka file ataupun saat memilih *Close File*.
-- **Storage & Media Analyzer Animations (Urutkan File Terbesar ke Terkecil)**:
-  - *Progressive Segment Fill Animation*: Batang multi-warna konsumsi storage (Video, Image, Archive, Document, dll.) bertumbuh mengalir secara mulus dari 0% ke persentase akhir dengan perlambatan kurva kubik.
-  - *Media Inspector Preview Fade-In*: Gambar thumbnail memudar masuk secara halus saat baris file dipilih, mengeliminasi kedip visual kasar.
-  - *Smooth Scan Progress*: Progress bar pemindaian media menggunakan interpolasi nilai bergerak mulus.
-- **Email Viewer Body Loader Fade-In**:
-  - Teks dan render HTML email memudar masuk (*fade-in* 150ms) begitu background thread selesai membaca isi pesan, menghilangkan kedip layar saat berpindah email kompleks.
-- **Batch Extractor Dialog Animations**:
-  - Pergerakan *progress bar* ekstraksi lampiran mengalir halus menggunakan interpolasi nilai (`animate_progress_bar`).
-  - Animasi denyut lembut pada status akhir dan tombol buka folder saat ekstraksi selesai 100%.
-- **Theme Switch Transition**:
-  - Transisi pergantian tema Dark / Light (`Ctrl+Shift+T`) memudar halus (*smooth opacity cross-fade* 180ms).
+### 🚀 Added
+- **In-App Check for Updates & In-Place Auto-Installer (`core/updater.py`, `gui/update_dialog.py`)**:
+  - Direct integration with GitHub Releases API (`https://api.github.com/repos/jackingpanda/mbox_viewer/releases/latest`) using Python standard libraries (`urllib.request`, `json`, `ssl`) with **zero third-party dependencies**.
+  - Robust semantic version comparison (`parse_version`, `is_newer_version`) comparing local `APP_VERSION` against remote GitHub tags.
+  - **Non-blocking asynchronous background workers** (`UpdateCheckerWorker`, `UpdateDownloadWorker`) powered by Qt `QThread` to ensure the GUI remains 100% fluid and responsive.
+  - **Live streaming download dialog** featuring a dynamic progress bar (0%–100%), downloaded MB / total MB metrics, download speed in MB/s, and accurate ETA calculations.
+  - Automatic ZIP archive integrity validation (`zipfile.is_zipfile`) and pre-extraction to a temporary staging folder.
+  - **Detached In-Place Auto-Updater (`mbox_update_apply.bat`)**: Solves Windows OS kernel executable/DLL file lock limitations by executing a detached batch process upon user confirmation (`🔄 Restart & Apply Update Now`), waiting for the parent PID to terminate, copying all updated files into the **exact same application location** (`robocopy /E /IS /IT`), relaunching the updated `MBOX_Viewer.exe`, and cleaning up temporary files.
+  - Menu Bar integration: `Help` -> `Check for Updates…`.
+- **Automated Standalone Windows x64 Packager (`build_release.py`, `build_release.bat`)**:
+  - One-click packaging script compiling Python 3.12, PySide6, and application assets into a standalone portable folder and ZIP archive (`dist/MBOX_Viewer_v1.3.0_Windows_x64.zip`).
+  - Automated SHA-256 checksum computation and validation of release assets.
+- **Native Micro-Animations & Responsive Transitions (`gui/animations.py`)**:
+  - Native PySide6 animation framework utilizing `QPropertyAnimation`, `QGraphicsOpacityEffect`, and cubic deceleration curves (`QEasingCurve.OutCubic` / `InOutQuad`) with zero external dependencies.
+  - *Hover Lift Effect*: Action cards (`[1]`, `[2]`, `[3]`, `[4]` and drop zone) lift 3px smoothly on cursor hover.
+  - *Soft Entrance Fade*: Cards fade in gently upon initial application launch.
+  - *Breathing Pulse Drop Zone*: Drag-and-drop zone pulses softly when a `.mbox` file is dragged over the window.
+  - *Cross-Fade View Switching*: Smooth transitions between the Welcome Launcher Hub and the main Workspace email table.
+  - *Progressive Segment Fill Animation*: Multi-color storage distribution segments grow smoothly from 0% to final percentages.
+  - *Media Inspector Preview Fade-In*: Thumbnails fade in smoothly upon file row selection, eliminating harsh visual flickering.
+- **Comprehensive Unit Test Suite**:
+  - Expanded test coverage to **73 automated unit tests** (`test_core.py`) with 100% pass rate.
+
+### 🌐 Internationalization & UI Unification
+- **100% Pure English Interface**:
+  - Fully unified all dialogs, labels, buttons, group box titles, placeholders, tooltips, error alerts, and status bar messages across `main_window.py`, `batch_extract_dialog.py`, `media_analyzer_dialog.py`, `run.bat`, and `build_release.bat` into clean, professional English.
+  - Showcases and documentation screenshots in `assets/screenshots/` regenerated in pure English.
 
 ---
 
 ## [1.2.1] — 2026-09-30
 
-### 💄 Fixed (Perbaikan Layout & Media Inspector)
-- **Pemisahan Baris Filter (Eliminasi Layout Overlap & Text Truncation)**:
-  - *Masalah*: Kotak pencarian, 7 tombol pill kategori, dropdown `Min Size`, dan dropdown `Extension` sebelumnya ditempatkan dalam satu baris horizontal tunggal sehingga mengalami desak-desakan (*squished/overlapped*), menyebabkan teks tombol terpotong menjadi `Videc`, `Imagi`, `Archiv`, dsb.
-  - *Solusi*: Memecah kontrol filter menjadi dua baris terpisah yang elegan:
-    - **Baris 1**: Bilah tombol pill kategori (`[All]`, `[🎬 Video]`, `[🖼️ Image]`, dll.) dengan scroll horizontal responsif, menampilkan icon, jumlah file, dan ukuran total tanpa pemotongan teks.
-    - **Baris 2**: Toolbar pencarian file/pengirim/subjek, dropdown ambang ukuran (`Min Size`), dropdown pilihan ekstensi (`Extension`), dan tombol `✕ Reset`.
-- **Perbaikan Bug Media Inspector (Panel Kosong / `"-"`)**:
-  - *Masalah*: Ketika pengguna mengklik baris pada tabel media, panel Media Inspector di sisi kanan tetap kosong (`Nama: -`, `Ukuran: -`, dst.) dan tombol aksi tetap *disabled*.
-  - *Root Cause*: Pemanggilan `selectionModel().selectedRows()` pada `QTableView` PySide6 mengembalikan list kosong jika seluruh kolom dalam baris tidak terpilih secara bersamaan (perilaku standar saat sel diklik dengan mouse). Hal ini memicu `_clear_inspector()` pada setiap klik.
-  - *Solusi*: Mengganti pembacaan baris dengan `_get_selected_item()` berbasis `selectedIndexes()` dan `currentIndex()`, serta mengikat sinyal `table.clicked` dan `table.activated` secara langsung.
-  - *Auto-Selection*: Secara otomatis menyorot baris pertama (#1 file terbesar) dan langsung memuat detail serta pratinjaunya di Media Inspector begitu tabel terbuka atau filter diubah.
-- **Thread-Safe I/O pada `MboxParser`**:
-  - Menambahkan `threading.Lock()` pada method `get_raw_message` dan pembacaan part attachment untuk menjamin ekstraksi pratinjau gambar di thread latar belakang tidak bentrok dengan operasi berkas lainnya.
+### 💄 Fixed
+- **Two-Row Filter Toolbar (Eliminated Layout Overlap & Text Truncation)**:
+  - *Issue*: Search bar, 7 category pills, `Min Size` dropdown, and `Extension` dropdown previously shared a single horizontal row, causing severe button squishing and label clipping (`Videc`, `Imagi`, `Archiv`).
+  - *Solution*: Split filter controls into two clean, dedicated rows:
+    - **Row 1**: Category filter pills (`[All]`, `[🎬 Video]`, `[🖼️ Image]`, etc.) with responsive scrolling and file count / size indicators.
+    - **Row 2**: Search input, size threshold dropdown (`Min Size`), extension filter dropdown (`Extension`), and `✕ Reset` button.
+- **Media Inspector Selection Bug (Empty Panel / `"-"`)**:
+  - *Issue*: Clicking rows in the media table failed to populate the Media Inspector panel (`Name: -`, `Size: -`) and kept action buttons disabled.
+  - *Root Cause*: `selectionModel().selectedRows()` returned an empty list when all columns in a row were not simultaneously highlighted.
+  - *Solution*: Replaced selection logic with `_get_selected_item()` using `selectedIndexes()` and `currentIndex()`, binding `table.clicked` and `table.activated` signals directly.
+  - *Auto-Selection*: Automatically selects and loads the #1 largest file into the Media Inspector as soon as the dialog opens or filters change.
+- **Thread-Safe I/O on `MboxParser`**:
+  - Added `threading.Lock()` to `get_raw_message` and attachment byte extraction to prevent background thumbnail generation from conflicting with concurrent file operations.
+
+---
 
 ## [1.2.0] — 2026-09-30
 
-### ✨ Added (Fitur Baru: MBOX Storage & Media Analyzer — Urutkan File Terbesar ke Terkecil)
-- **Tabel Peringkat File Terbesar ke Terkecil (Ranked Media View)**:
-  - Mengurutkan seluruh media dan lampiran dalam file MBOX dari yang paling besar ke paling kecil secara presisi berdasarkan ukuran byte sebenarnya.
-  - Menampilkan visual progress bar mini (`% Total`) di dalam sel tabel, memperlihatkan proporsi konsumsi storage secara visual secara visual (peringkat ukuran terbesar ke terkecil).
-- **Interactive Storage Distribution Bar (Treemap / Segment Bar)**:
-  - Bilah distribusi multi-warna proporsional yang memetakan pemakaian disk per kategori:
-    - 🎬 **Video** (Ungu `#8b5cf6`): `.mp4`, `.3gp`, `.mkv`, `.avi`, `.mov`, dll.
-    - 🖼️ **Image** (Emerald `#10b981`): `.jpg`, `.png`, `.gif`, `.webp`, `.bmp`, dll.
-    - 📦 **Archive** (Amber `#f59e0b`): `.zip`, `.rar`, `.7z`, `.tar`, `.gz`, dll.
-    - 📄 **Document** (Merah/Koral `#ef4444`): `.pdf`, `.docx`, `.xlsx`, `.pptx`, dll.
-    - 🎵 **Audio** (Cyan `#06b6d4`): `.mp3`, `.wav`, `.m4a`, `.aac`, dll.
-    - 📁 **Other** (Slate `#64748b`): file lainnya.
-  - Setiap segmen bar interaktif: hover menampilkan tooltip ukuran, persentase, dan jumlah file. Mengklik segmen langsung memfilter tabel.
-- **Pills Filter Kategori & Filter Cepat Ekstensi**:
-  - Tombol pill kategori dengan indikator ukuran data dan jumlah file (`[All]`, `[🎬 Video]`, `[🖼️ Image]`, `[📦 Archive]`, dll.).
-  - Dropdown filter ekstensi teratas (misal: `.3gp (5.1 GB)`, `.mp4 (3.1 GB)`, `.jpg (2.8 GB)`).
-  - Dropdown ambang batas ukuran (`All Sizes`, `> 100 MB`, `> 50 MB`, `> 25 MB`, `> 10 MB`, `> 5 MB`, `> 1 MB`, `> 100 KB`).
-  - Kotak pencarian real-time untuk nama file, pengirim, dan subjek email.
-- **Panel Inspektur & Pratinjau Media (Media Inspector)**:
-  - Pratinjau visual gambar instan (asynchronous tanpa blocking UI) dengan scaling rasio aspek.
-  - Kartu media untuk video/audio dengan tombol **"▶️ Open with Default App"** (`os.startfile`) untuk memutar langsung di aplikasi default Windows (VLC, Photos, Windows Media Player, dsb.).
-  - Kartu konteks email: pengirim, alamat email, subjek, tanggal, dan nomor indeks email.
-- **Navigasi Langsung ke Email ("✉️ Jump to Containing Email")**:
-  - Mengklik tombol Jump langsung menyorot dan membuka email terkait di jendela utama MBOX Viewer secara otomatis.
-- **Ekstraksi Langsung (Single & Batch Filtered)**:
-  - Tombol **"💾 Extract File…"** untuk mengekstrak file terpilih ke folder tujuan.
-  - Tombol **"⚡ Extract Filtered…"** untuk mengekstrak massal seluruh file hasil filter saat ini secara instan lengkap dengan progress dialog.
-- **Tab Tambahan: "Emails by Size" (MBOX Storage)**:
-  - Tab sekunder yang mengurutkan seluruh 10.123 email berdasarkan ukuran aslinya di file MBOX (terbuka instan < 10 ms).
+### ✨ Added
+- **MBOX Storage & Media Analyzer (Rank Files Largest to Smallest)**:
+  - Precise sorting of all media attachments and emails from largest to smallest based on actual byte sizes.
+  - Visual mini progress bars (`% Total`) within table cells showing proportional storage consumption.
+- **Interactive Storage Distribution Bar (Treemap Segment Bar)**:
+  - Multi-color segmented bar displaying disk usage by category:
+    - 🎬 **Video** (Purple `#8b5cf6`): `.mp4`, `.3gp`, `.mkv`, `.avi`, `.mov`, etc.
+    - 🖼️ **Image** (Emerald `#10b981`): `.jpg`, `.png`, `.gif`, `.webp`, `.bmp`, etc.
+    - 📦 **Archive** (Amber `#f59e0b`): `.zip`, `.rar`, `.7z`, `.tar`, `.gz`, etc.
+    - 📄 **Document** (Coral `#ef4444`): `.pdf`, `.docx`, `.xlsx`, `.pptx`, etc.
+    - 🎵 **Audio** (Cyan `#06b6d4`): `.mp3`, `.wav`, `.m4a`, `.aac`, etc.
+    - 📁 **Other** (Slate `#64748b`): Other file types.
+  - Interactive segments with hover tooltips showing size, percentage, and file counts; clicking filters the table immediately.
+- **Media Inspector Panel**:
+  - Instant asynchronous image thumbnail preview with aspect-ratio scaling.
+  - Media player integration with **"▶️ Open with Default App"** (`os.startfile`) to play audio/video in default Windows players.
+  - Source email context card: sender name, email address, subject, date, and index number.
+  - Direct email jump navigation: **"✉️ Jump to Containing Email"** opens and highlights the email in the main window.
+  - Single and batch filtered extraction: **"💾 Extract File…"** and **"⚡ Extract Filtered…"** with live progress tracking.
+- **Secondary Tab: "Emails by Size" (MBOX Storage)**:
+  - Secondary view sorting all 10,123 emails by their raw byte size on disk.
 - **Persistent Media Index Cache (`.media.json`)**:
-  - Menyimpan metadata media ke disk cache sehingga pembukaan dialog berikutnya berjalan instan (< 0,05 detik).
-  - Tersedia tombol **"🔄 Rescan MBOX"** untuk memperbarui indeks kapan saja.
-- **Integrasi Menu & Shortcut**:
-  - Menu `Export` -> `📊 Storage & Media Analyzer… (Ctrl+W)`.
-  - Menu `View` -> `📊 Storage & Media Analyzer… (Ctrl+W)`.
-  - Tombol toolbar utama: `🌳 Media Analyzer`.
+  - Saves media metadata to disk cache for instantaneous subsequent dialog opening (< 50 ms).
+
+---
 
 ## [1.1.3] — 2026-09-30
 
-### 🐛 Fixed (Perbaikan Bug Kritis)
-- **64-Bit Integer Overflow pada Sinyal PySide6**:
-  - *Masalah*: Sinyal background thread (`progress_detail` dan `finished`) sebelumnya menggunakan tipe data `int` (C++ `qint32`) yang memiliki batas maksimal 2,14 GB ($2^{31}-1$). Ketika mengekstrak lampiran berukuran 13,33 GB, nilai bytes mengalami overflow dan ter-reset menjadi `0 B` pada dialog akhir.
-  - *Solusi*: Seluruh sinyal kapasitas bytes ditingkatkan ke tipe 64-bit integer (`qint64`), mendukung ekstraksi file puluhan hingga ratusan Gigabyte secara akurat tanpa batas 2 GB.
-- **Ukuran File Nyata di Live Log**:
-  - Memperbaiki bug di mana setiap item file di log list menampilkan akumulasi total ukuran data alih-alih ukuran file individualnya. Sekarang log menampilkan ukuran riil setiap file yang disimpan (contoh: `✓ pic (3760).jpg (1.8 MB)`).
-- **Sinkronisasi Skala & Persentase Progress Bar (100%)**:
-  - Memperbaiki ketidaksesuaian rentang progress bar yang sebelumnya menggunakan total seluruh email (10.123), padahal loop hanya memindai email berlampiran (7.723), menyebabkan progress bar mentok di 74%.
-  - Memastikan callback progress selalu dipanggil untuk setiap email yang dipindai (bahkan jika email tersebut tidak memiliki lampiran yang cocok dengan filter aktif), dan memastikan nilai progress bar selalu mencapai 100% saat proses selesai.
+### 🐛 Fixed
+- **64-Bit Integer Overflow on PySide6 Signals**:
+  - *Issue*: Background worker signals (`progress_detail` and `finished`) previously used standard 32-bit integers (`qint32`) with a maximum capacity of 2.14 GB. Extracting 13.33 GB of attachments resulted in integer overflow and reset the byte counter to `0 B`.
+  - *Fix*: Upgraded all byte capacity signals to 64-bit integers (`qint64`), safely supporting multi-gigabyte extractions without limits.
+- **Accurate Real File Sizes in Live Extraction Log**:
+  - Fixed an issue where extraction log items displayed accumulated running totals instead of individual file sizes. Now displays actual individual file sizes (e.g. `✓ pic (3760).jpg (1.8 MB)`).
+- **Synchronized Progress Bar Scaling (100% Completion)**:
+  - Fixed progress bar discrepancy where total count was set to all 10,123 emails while only 7,723 emails had attachments, causing the progress bar to stall at 74%. Ensured progress callback fires for every scanned email and reaches 100% on completion.
 
 ---
 
 ## [1.1.2] — 2026-09-30
 
-### 🐛 Fixed (Perbaikan Launcher)
-- **Eliminasi Auto-Timeout pada Launcher (`run.bat`)**:
-  - Mengganti perintah `choice /c 12 /t 5 /d 1` dengan `set /p`. Script sekarang menunggu pilihan pengguna tanpa batas waktu dan tidak lagi membuka pilihan 1 secara otomatis jika pengguna belum menekan tombol.
-- **Perbaikan Bug Double Window pada CMD**:
-  - Menghilangkan struktur blok kurung nested `if (...) else (...)` yang menyebabkan parser `cmd.exe` melompat ke blok `else` terluar dan memicu jendela kedua terbuka saat jendela pertama ditutup.
-  - Menggantinya dengan label eksekusi terisolasi (`goto :LAUNCH_TAKEOUT`, `goto :LAUNCH_BLANK`, `goto :FINISH`) dengan kode keluar bersih (`exit /b 0`).
+### 🐛 Fixed
+- **Eliminated Auto-Timeout on Launcher (`run.bat`)**:
+  - Replaced `choice /c 12 /t 5 /d 1` with standard `set /p` input prompt, ensuring the launcher waits indefinitely for user input.
+- **Fixed CMD Double Window Glitch**:
+  - Removed nested `if (...) else (...)` block structures that caused `cmd.exe` to trigger a secondary window on exit. Replaced with isolated execution labels and clean exit codes.
 
 ---
 
 ## [1.1.1] — 2026-09-30
 
-### 💄 Fixed (Perbaikan UI & Layout)
+### 💄 Fixed
 - **Responsive Scroll Container (`QScrollArea`)**:
-  - Membungkus seluruh kartu pengaturan di `BatchExtractDialog` ke dalam container `QScrollArea` dengan `setWidgetResizable(True)`. Menghilangkan masalah elemen terpotong (*squished layout*) pada berbagai resolusi layar dan DPI scaling (1080p, laptop, scaling 125%/150%).
-- **Pembaruan Metrik Stylesheet (`dark.qss` & `light.qss`)**:
-  - Menambahkan aturan eksplisit `min-height: 22-26px` pada `QRadioButton`, `QCheckBox`, `QLineEdit`, dan `QComboBox`.
-  - Memperbaiki margin judul `QGroupBox` dan padding internal agar tidak menimpa elemen di dalamnya.
-  - Memperbaiki *mnemonic accelerator glitch* pada karakter `&` di judul bingkai grup.
+  - Wrapped `BatchExtractDialog` settings cards inside a resizable `QScrollArea`, preventing squished or clipped layouts across varying screen resolutions and DPI scaling factors (100%, 125%, 150%).
+- **Stylesheet Metric Updates (`dark.qss` & `light.qss`)**:
+  - Added explicit `min-height: 22-26px` rules for radio buttons, checkboxes, text fields, and combo boxes.
+  - Adjusted group box header margins and internal padding to prevent content overlapping.
+  - Fixed ampersand mnemonic accelerator glitches on button labels.
 
 ---
 
 ## [1.1.0] — 2026-09-30
 
-### 🚀 Added (Fitur Baru)
+### 🚀 Added
 - **Dedicated Batch Attachment Extractor (`gui/batch_extract_dialog.py`)**:
-  - Dialog khusus ekstraksi massal dengan tombol toolbar `⚡ Batch Extract` dan shortcut `Ctrl+Shift+E`.
-  - **Filter Ekstensi Cerdas**: Preset dokumen (PDF, Word, Excel), gambar (JPG, PNG, WebP), arsip (ZIP, RAR, 7Z), media (MP4, MP3), dan input teks ekstensi khusus.
-  - **Struktur Folder Fleksibel**: Pilihan simpan *Flat* (satu folder), *Per Email*, *Per Pengirim*, *Per Periode*, dan *Per Kategori Tipe*.
-  - **Penanganan Duplikat**: Opsi penamaan nomor unik otomatis (`file (1).ext`), *Skip*, atau *Overwrite*.
-  - **Kontrol Aman**: Tombol ⏹️ Batal / Stop yang dapat menghentikan proses kapan saja tanpa merusak data yang sudah tersimpan.
-  - **Akses Cepat**: Tombol 📂 Buka Folder Hasil langsung ke Windows Explorer saat selesai.
-
-### ⚡ Performance (Optimasi Performa Ekstrem)
-- **Streaming 64-bit Binary Engine**:
-  - Menggantikan parser standar `mailbox.mbox` yang lambat pada file besar (150 juta baris `readline`) dengan pemindai biner berbuffer 4–8 MB.
-  - **Memori Index Sangat Ringan**: Seluruh 10.123 posisi email pada file 8.76 GB hanya membutuhkan memori RAM **~79 Kilobyte** (menggunakan `array.array('q')`).
-  - **Cache Index Persisten (`.idx`)**: Pemindaian batas email disimpan ke file index biner kecil, mempercepat waktu buka file dari beberapa menit menjadi **kurang dari 0.8 detik**.
-  - **Instant Random Seek ($O(1)$)**: Membuka email posisi berapa pun langsung melompat (*seek*) ke offset byte spesifik dalam **< 150 ms**.
-  - **Single-Pass Extraction**: Membaca dan mengekstrak semua lampiran dalam 1 putaran *stream* per email, mengurangi beban I/O disk hingga 75%.
+  - Toolbar button `⚡ Batch Extract` and shortcut `Ctrl+Shift+E`.
+  - **Smart Type Filters**: Presets for Documents, Images, Archives, Media, and custom extension input.
+  - **Flexible Folder Organization**: Flat, by Email Subject, by Sender, by Date Period, or by File Type.
+  - **Duplicate Handling**: Automatic numbering (`file (1).ext`), Skip, or Overwrite.
+  - **Safe Controls**: Immediate cancellation button without corrupting already saved files.
+- **Streaming 64-Bit Binary Engine**:
+  - High-performance binary scanner with 4–8 MB buffering replacing standard slow `mailbox.mbox` parsing.
+  - **Ultra-lightweight RAM footprint**: 10,123 email offsets from an 8.76 GB archive require only **~79 KB** RAM.
+  - **Persistent Binary Index Cache (`.idx`)**: Subsequent file opening takes **less than 0.8 seconds**.
+  - **Instant $O(1)$ Random Seek**: Seeking to any email offset takes **< 150 ms**.
+  - **Single-Pass Extraction**: Reduces disk I/O operations by up to 75%.
 
 ---
 
 ## [1.0.0] — 2026-09-29
 
-### 🚀 Initial Release (Rilis Perdana)
-- **Arsitektur Modular**:
-  - Pemisahan ketat antara lapisan logika bisnis (`core/`), antarmuka pengguna (`gui/`), thread asinkron (`workers/`), dan utilitas (`utils/`).
-  - Zero GUI dependencies pada layer `core/`.
-- **Dukungan MBOX Penuh**:
-  - Membuka file `.mbox` via file dialog (`Ctrl+O`), drag-and-drop, dan argumen CLI.
-- **Tampilan Daftar Email Cepat**:
-  - Menggunakan model tabel virtual (`QAbstractTableModel`) anti-lag dengan kolom Subject, From, Date, Labels, dan Lampiran yang dapat disortir.
-- **Email Viewer Aman**:
-  - Render HTML aman via `QTextBrowser` dengan script sanitizer, toggle Plain Text, dan tab *Raw Headers* untuk inspeksi forensik.
-- **Manajemen Lampiran**:
-  - Deteksi dan tampilan daftar lampiran dengan ikon tipe file dan ukuran terformat.
-  - Simpan lampiran tunggal atau seluruh lampiran dari email aktif.
-- **Mesin Pencarian & Filter**:
-  - Pencarian kata kunci (*debounced*) pada subjek, pengirim, dan cuplikan isi email.
-  - Filter rentang tanggal dan filter label otomatis Gmail (`X-Gmail-Labels`).
-- **Ekspor EML**:
-  - Kemampuan ekspor email terpilih atau massal ke format standar `.eml`.
-- **Dashboard Statistik**:
-  - Dialog statistik visual (`Ctrl+I`) untuk grafik distribusi tahunan, *top senders*, dan statistik lampiran.
-- **Tema Gelap & Terang**:
-  - Stylesheet Dark Theme dan Light Theme modern dengan toggle cepat (`Ctrl+Shift+T`).
-- **Suite Pengujian Unit Mandiri**:
-  - Script pengujian `test_core.py` dengan 37 skenario pengujian komprehensif (100% PASS).
+### 🚀 Initial Release
+- **Modular Full-Stack Architecture**: Clean separation between core data layer (`core/`), GUI (`gui/`), background workers (`workers/`), and utilities (`utils/`).
+- **Comprehensive MBOX Support**: Open archives via file dialog (`Ctrl+O`), drag-and-drop, and CLI parameters.
+- **High-Speed Virtual Table**: Anti-lag `QAbstractTableModel` displaying Subject, From, Date, Labels, and Attachments.
+- **Secure Email Viewer**: Sanitized HTML rendering via `QTextBrowser`, Plain Text toggle, and Raw Headers inspection.
+- **Search & Filtering Engine**: Debounced full-text search across sender, subject, and body snippet; date range and Gmail label filters.
+- **EML Export**: Single and batch export to standard `.eml` format.
+- **Statistical Analytics**: Visual statistics dialog (`Ctrl+I`) for yearly distribution, top senders, and attachment metrics.
+- **Dark & Light Modes**: Curated stylesheets with instant toggle shortcut (`Ctrl+Shift+T`).
+- **Automated Unit Testing**: Comprehensive test suite with 100% pass verification.
