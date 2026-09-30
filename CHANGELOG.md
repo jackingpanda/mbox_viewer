@@ -6,6 +6,32 @@ Format penulisan changelog ini mengacu pada standar [Keep a Changelog](https://k
 
 ---
 
+## [1.3.0] — 2026-09-30
+
+### ✨ Added (Sistem Mikro-Animasi Elegan & Responsif)
+- **Modul Animasi Asinkron (`gui/animations.py`)**:
+  - Dibuat helper animasi natif PySide6 berbasis `QPropertyAnimation`, `QGraphicsOpacityEffect`, dan kurva perlambatan alami (`QEasingCurve.OutCubic` / `InOutQuad`) tanpa dependensi eksternal.
+  - Berjalan non-blocking di main thread, terisolasi penuh dari thread parser mbox sehingga **zero-lag** pada arsip 9GB+.
+- **Animasi Welcome & Launcher Screen**:
+  - *Hover Lift Effect*: Kartu menu aksi (`[1]`, `[2]`, `[3]`, `[4]` dan area drop) terangkat mulus 3px ke atas saat diarahkan kursor mouse.
+  - *Soft Entrance Fade*: Kartu menu memudar masuk lembut saat pertama kali membuka aplikasi.
+  - *Breathing Pulse Drop Zone*: Kotak drop-zone berdenyut lembut saat mendeteksi file `.mbox` diseret di atas jendela.
+- **Transisi Antar Layar Mulus (Cross-Fade Stacked Views)**:
+  - Transisi antara Welcome Screen dan Workspace (Tabel Email) berganti dengan efek *cross-fade* lembut saat membuka file ataupun saat memilih *Close File*.
+- **WizTree Storage & Media Analyzer Animations**:
+  - *Progressive Segment Fill Animation*: Batang multi-warna konsumsi storage (Video, Image, Archive, Document, dll.) bertumbuh mengalir secara mulus dari 0% ke persentase akhir dengan perlambatan kurva kubik.
+  - *Media Inspector Preview Fade-In*: Gambar thumbnail memudar masuk secara halus saat baris file dipilih, mengeliminasi kedip visual kasar.
+  - *Smooth Scan Progress*: Progress bar pemindaian media menggunakan interpolasi nilai bergerak mulus.
+- **Email Viewer Body Loader Fade-In**:
+  - Teks dan render HTML email memudar masuk (*fade-in* 150ms) begitu background thread selesai membaca isi pesan, menghilangkan kedip layar saat berpindah email kompleks.
+- **Batch Extractor Dialog Animations**:
+  - Pergerakan *progress bar* ekstraksi lampiran mengalir halus menggunakan interpolasi nilai (`animate_progress_bar`).
+  - Animasi denyut lembut pada status akhir dan tombol buka folder saat ekstraksi selesai 100%.
+- **Theme Switch Transition**:
+  - Transisi pergantian tema Dark / Light (`Ctrl+Shift+T`) memudar halus (*smooth opacity cross-fade* 180ms).
+
+---
+
 ## [1.2.1] — 2026-09-30
 
 ### 💄 Fixed (Perbaikan Layout & Media Inspector)

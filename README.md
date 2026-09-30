@@ -5,7 +5,7 @@
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![GUI](https://img.shields.io/badge/GUI-PySide6%20(Qt6)-green.svg)](https://pypi.org/project/PySide6/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-1.2.1-orange.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-1.3.0-orange.svg)](CHANGELOG.md)
 
 ---
 
