@@ -15,12 +15,16 @@ from PySide6.QtGui import QAction, QKeySequence, QGuiApplication
 from PySide6.QtWidgets import (
     QApplication,
     QFileDialog,
+    QFrame,
+    QHBoxLayout,
     QLabel,
     QMainWindow,
     QMessageBox,
     QProgressBar,
     QPushButton,
+    QScrollArea,
     QSplitter,
+    QStackedWidget,
     QVBoxLayout,
     QWidget,
 )
@@ -35,6 +39,13 @@ from gui.email_list_widget import EmailListWidget
 from gui.email_viewer import EmailViewer
 from gui.search_bar import SearchBar
 from gui.stats_dialog import StatsDialog
+from utils.constants import (
+    APP_NAME,
+    APP_VERSION,
+    APP_AUTHOR,
+    APP_EMAIL,
+    DEFAULT_TAKEOUT_PATH,
+)
 from utils.helpers import format_size
 from utils.settings import AppSettings
 from workers.body_worker import BodyWorker
@@ -65,6 +76,7 @@ class MainWindow(QMainWindow):
         self._filtered_records: Optional[list[EmailRecord]] = None
         self._current_record: Optional[EmailRecord] = None
         self._current_attachments: list[AttachmentInfo] = []
+        self._pending_post_parse_action: Optional[str] = None
 
         self._parse_worker: Optional[ParseWorker] = None
         self._search_worker: Optional[SearchWorker] = None
@@ -231,6 +243,26 @@ class MainWindow(QMainWindow):
         root_layout.setContentsMargins(0, 0, 0, 0)
         root_layout.setSpacing(0)
 
+        self._stacked_widget = QStackedWidget(central)
+        root_layout.addWidget(self._stacked_widget)
+
+        # Page 0: Welcome / Startup Launcher
+        self._welcome_widget = self._build_welcome_widget()
+        self._stacked_widget.addWidget(self._welcome_widget)
+
+        # Page 1: Main Workspace
+        self._workspace_widget = self._build_workspace_widget()
+        self._stacked_widget.addWidget(self._workspace_widget)
+
+        # Default start on Welcome screen
+        self._stacked_widget.setCurrentIndex(0)
+
+    def _build_workspace_widget(self) -> QWidget:
+        widget = QWidget(self)
+        root_layout = QVBoxLayout(widget)
+        root_layout.setContentsMargins(0, 0, 0, 0)
+        root_layout.setSpacing(0)
+
         # Search bar
         self._search_bar = SearchBar(self)
         self._search_bar.search_changed.connect(self._on_search_changed)
@@ -273,6 +305,204 @@ class MainWindow(QMainWindow):
         main_splitter.setStretchFactor(1, 3)
 
         root_layout.addWidget(main_splitter, 1)
+        return widget
+
+    def _build_welcome_widget(self) -> QWidget:
+        scroll = QScrollArea(self)
+        scroll.setObjectName("WelcomeScrollArea")
+        scroll.setWidgetResizable(True)
+        scroll.setFrameShape(QFrame.NoFrame)
+
+        content = QWidget()
+        layout = QVBoxLayout(content)
+        layout.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
+        layout.setContentsMargins(40, 24, 40, 24)
+        layout.setSpacing(14)
+
+        # Hero
+        hero = QWidget()
+        hero_layout = QVBoxLayout(hero)
+        hero_layout.setContentsMargins(0, 0, 0, 4)
+        hero_layout.setSpacing(6)
+        hero_layout.setAlignment(Qt.AlignCenter)
+
+        title_lbl = QLabel(f"📬 {APP_NAME} <span style='font-size: 11pt; color: #3b82f6; font-weight: normal;'>v{APP_VERSION}</span>")
+        title_lbl.setStyleSheet("font-size: 26pt; font-weight: bold;")
+        title_lbl.setAlignment(Qt.AlignCenter)
+        hero_layout.addWidget(title_lbl)
+
+        sub_lbl = QLabel("Aplikasi penjelajah email arsip Takeout, ekstraksi massal lampiran, & analisis penyimpanan.")
+        sub_lbl.setStyleSheet("font-size: 10.5pt; color: #94a3b8;")
+        sub_lbl.setAlignment(Qt.AlignCenter)
+        hero_layout.addWidget(sub_lbl)
+
+        author_lbl = QLabel(f"Developer: <b>{APP_AUTHOR}</b> (<a href='mailto:{APP_EMAIL}' style='color:#60a5fa;'>{APP_EMAIL}</a>)")
+        author_lbl.setStyleSheet("font-size: 9.5pt; color: #64748b;")
+        author_lbl.setAlignment(Qt.AlignCenter)
+        author_lbl.setOpenExternalLinks(True)
+        hero_layout.addWidget(author_lbl)
+
+        layout.addWidget(hero)
+
+        # Cards container (max width 760)
+        cards_widget = QWidget()
+        cards_widget.setMaximumWidth(760)
+        cards_layout = QVBoxLayout(cards_widget)
+        cards_layout.setContentsMargins(0, 0, 0, 0)
+        cards_layout.setSpacing(14)
+
+        # Check default Takeout existence
+        takeout_exists = os.path.isfile(DEFAULT_TAKEOUT_PATH)
+        takeout_size_str = ""
+        if takeout_exists:
+            try:
+                sz = os.path.getsize(DEFAULT_TAKEOUT_PATH)
+                takeout_size_str = f"{format_size(sz)} (Terdeteksi Otomatis)"
+            except Exception:
+                takeout_size_str = "Terdeteksi"
+
+        # Card 1: Primary Takeout
+        c1 = QFrame()
+        c1.setProperty("class", "WelcomeCardPrimary")
+        c1_layout = QHBoxLayout(c1)
+        c1_layout.setContentsMargins(20, 16, 20, 16)
+        c1_layout.setSpacing(16)
+
+        c1_info = QVBoxLayout()
+        c1_info.setSpacing(5)
+        c1_title = QLabel("📥 [1] Buka Arsip Gmail Takeout Langsung")
+        c1_title.setStyleSheet("font-size: 13pt; font-weight: bold; color: #60a5fa;")
+        if takeout_exists:
+            c1_desc = QLabel(f"All mail Including Spam and Trash.mbox — <b style='color:#34d399;'>{takeout_size_str}</b>")
+        else:
+            c1_desc = QLabel("Buka arsip Takeout bawaan (File default belum ditemukan di folder Takeout).")
+        c1_desc.setStyleSheet("font-size: 10pt; color: #cbd5e1;")
+        c1_info.addWidget(c1_title)
+        c1_info.addWidget(c1_desc)
+        c1_layout.addLayout(c1_info, 1)
+
+        c1_btn = QPushButton("🚀 Buka Sekarang")
+        c1_btn.setCursor(Qt.PointingHandCursor)
+        c1_btn.setStyleSheet("""
+        QPushButton {
+            background-color: #2563eb;
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 11pt;
+            padding: 10px 24px;
+            border-radius: 8px;
+            border: none;
+        }
+        QPushButton:hover { background-color: #1d4ed8; }
+        """)
+        c1_btn.clicked.connect(self._on_welcome_open_takeout)
+        c1_layout.addWidget(c1_btn)
+        cards_layout.addWidget(c1)
+
+        # Card 2: Open other mbox
+        c2 = QFrame()
+        c2.setProperty("class", "WelcomeCard")
+        c2_layout = QHBoxLayout(c2)
+        c2_layout.setContentsMargins(20, 16, 20, 16)
+        c2_layout.setSpacing(16)
+
+        c2_info = QVBoxLayout()
+        c2_info.setSpacing(5)
+        c2_title = QLabel("📂 [2] Pilih File .MBOX Lainnya")
+        c2_title.setStyleSheet("font-size: 12pt; font-weight: bold;")
+        c2_desc = QLabel("Buka file arsip .mbox manual dari folder lain di komputer atau drive eksternal.")
+        c2_desc.setStyleSheet("font-size: 9.5pt; color: #94a3b8;")
+        c2_info.addWidget(c2_title)
+        c2_info.addWidget(c2_desc)
+        c2_layout.addLayout(c2_info, 1)
+
+        c2_btn = QPushButton("Pilih File…")
+        c2_btn.setCursor(Qt.PointingHandCursor)
+        c2_btn.setStyleSheet("""
+        QPushButton {
+            font-weight: bold;
+            font-size: 10pt;
+            padding: 9px 20px;
+            border-radius: 6px;
+        }
+        """)
+        c2_btn.clicked.connect(self._on_open_file)
+        c2_layout.addWidget(c2_btn)
+        cards_layout.addWidget(c2)
+
+        # Card 3 & 4 row (Grid)
+        c_grid = QWidget()
+        g_layout = QHBoxLayout(c_grid)
+        g_layout.setContentsMargins(0, 0, 0, 0)
+        g_layout.setSpacing(14)
+
+        # Card 3: WizTree Analyzer
+        c3 = QFrame()
+        c3.setProperty("class", "WelcomeCard")
+        c3_layout = QVBoxLayout(c3)
+        c3_layout.setContentsMargins(18, 16, 18, 16)
+        c3_layout.setSpacing(8)
+        c3_title = QLabel("📊 [3] WizTree Media Analyzer")
+        c3_title.setStyleSheet("font-size: 11pt; font-weight: bold;")
+        c3_desc = QLabel("Urutkan file dari terbesar ke terkecil. Filter Video, Gambar, Dokumen, Zip.")
+        c3_desc.setStyleSheet("font-size: 9pt; color: #94a3b8;")
+        c3_desc.setWordWrap(True)
+        c3_btn = QPushButton("Buka Media Analyzer")
+        c3_btn.setCursor(Qt.PointingHandCursor)
+        c3_btn.setStyleSheet("font-size: 9.5pt; padding: 8px 14px; border-radius: 6px;")
+        c3_btn.clicked.connect(self._on_welcome_open_analyzer)
+        c3_layout.addWidget(c3_title)
+        c3_layout.addWidget(c3_desc)
+        c3_layout.addStretch()
+        c3_layout.addWidget(c3_btn)
+        g_layout.addWidget(c3)
+
+        # Card 4: Batch Extractor
+        c4 = QFrame()
+        c4.setProperty("class", "WelcomeCard")
+        c4_layout = QVBoxLayout(c4)
+        c4_layout.setContentsMargins(18, 16, 18, 16)
+        c4_layout.setSpacing(8)
+        c4_title = QLabel("⚡ [4] Batch Extractor")
+        c4_title.setStyleSheet("font-size: 11pt; font-weight: bold;")
+        c4_desc = QLabel("Ekstrak semua lampiran sekaligus dengan filter ekstensi & opsi subfolder.")
+        c4_desc.setStyleSheet("font-size: 9pt; color: #94a3b8;")
+        c4_desc.setWordWrap(True)
+        c4_btn = QPushButton("Buka Batch Extractor")
+        c4_btn.setCursor(Qt.PointingHandCursor)
+        c4_btn.setStyleSheet("font-size: 9.5pt; padding: 8px 14px; border-radius: 6px;")
+        c4_btn.clicked.connect(self._on_welcome_open_batch_extract)
+        c4_layout.addWidget(c4_title)
+        c4_layout.addWidget(c4_desc)
+        c4_layout.addStretch()
+        c4_layout.addWidget(c4_btn)
+        g_layout.addWidget(c4)
+
+        cards_layout.addWidget(c_grid)
+
+        # Drop zone card
+        drop_card = QFrame()
+        drop_card.setObjectName("DropZoneCard")
+        drop_layout = QVBoxLayout(drop_card)
+        drop_layout.setContentsMargins(18, 14, 18, 14)
+        drop_layout.setAlignment(Qt.AlignCenter)
+        drop_lbl = QLabel("📥 Atau seret & lepas (drag-and-drop) file .mbox ke jendela ini")
+        drop_lbl.setStyleSheet("font-size: 9.5pt; color: #60a5fa; font-weight: 500;")
+        drop_lbl.setAlignment(Qt.AlignCenter)
+        drop_layout.addWidget(drop_lbl)
+        cards_layout.addWidget(drop_card)
+
+        # Shortcut hints
+        hints_lbl = QLabel("Tip: Tekan tombol 1, 2, 3, atau 4 di keyboard untuk akses instan  •  Ctrl+Shift+T Ganti Tema")
+        hints_lbl.setStyleSheet("font-size: 8.5pt; color: #64748b;")
+        hints_lbl.setAlignment(Qt.AlignCenter)
+        cards_layout.addWidget(hints_lbl)
+
+        layout.addWidget(cards_widget)
+        layout.addStretch()
+
+        scroll.setWidget(content)
+        return scroll
 
     def _build_statusbar(self):
         sb = self.statusBar()
@@ -358,13 +588,69 @@ class MainWindow(QMainWindow):
         self._size_label.setText("")
         self._progress_bar.setVisible(False)
         self._btn_cancel_op.setVisible(False)
+        if hasattr(self, "_stacked_widget"):
+            self._stacked_widget.setCurrentIndex(0)
 
     # ------------------------------------------------------------------
-    # Parsing
+    # Welcome Screen Actions & Keyboard Shortcuts
     # ------------------------------------------------------------------
+
+    def _on_welcome_open_takeout(self):
+        """Open the default Takeout mbox directly, or prompt if not found."""
+        if os.path.isfile(DEFAULT_TAKEOUT_PATH):
+            self.open_mbox_file(DEFAULT_TAKEOUT_PATH)
+        else:
+            QMessageBox.information(
+                self,
+                "File Takeout",
+                f"File Takeout default tidak ditemukan di:\n{DEFAULT_TAKEOUT_PATH}\n\nSilakan pilih file .mbox manual.",
+            )
+            self._on_open_file()
+
+    def _on_welcome_open_analyzer(self):
+        """Open Media Analyzer from Welcome screen."""
+        if self._all_records:
+            self._on_show_media_analyzer()
+        elif os.path.isfile(DEFAULT_TAKEOUT_PATH):
+            self._pending_post_parse_action = "analyzer"
+            self.open_mbox_file(DEFAULT_TAKEOUT_PATH)
+        else:
+            self._pending_post_parse_action = "analyzer"
+            self._on_open_file()
+
+    def _on_welcome_open_batch_extract(self):
+        """Open Batch Extractor from Welcome screen."""
+        if self._all_records:
+            self._on_show_batch_extract_dialog()
+        elif os.path.isfile(DEFAULT_TAKEOUT_PATH):
+            self._pending_post_parse_action = "batch_extract"
+            self.open_mbox_file(DEFAULT_TAKEOUT_PATH)
+        else:
+            self._pending_post_parse_action = "batch_extract"
+            self._on_open_file()
+
+    def keyPressEvent(self, event):
+        """Handle numeric shortcut keys (1, 2, 3, 4) on Welcome Screen."""
+        if hasattr(self, "_stacked_widget") and self._stacked_widget.currentIndex() == 0:
+            key = event.key()
+            if key in (Qt.Key_1, Qt.Key_Return, Qt.Key_Enter):
+                self._on_welcome_open_takeout()
+                return
+            elif key == Qt.Key_2:
+                self._on_open_file()
+                return
+            elif key == Qt.Key_3:
+                self._on_welcome_open_analyzer()
+                return
+            elif key == Qt.Key_4:
+                self._on_welcome_open_batch_extract()
+                return
+        super().keyPressEvent(event)
 
     def _start_parse(self, filepath: str):
         self._on_close_file()
+        if hasattr(self, "_stacked_widget"):
+            self._stacked_widget.setCurrentIndex(1)
 
         self._file_size = os.path.getsize(filepath)
         self._size_label.setText(format_size(self._file_size))
@@ -396,6 +682,13 @@ class MainWindow(QMainWindow):
         labels = self._search_engine.get_all_labels(self._all_records)
         self._search_bar.populate_labels(labels)
         self._set_file_loaded(True)
+
+        if self._pending_post_parse_action == "analyzer":
+            self._pending_post_parse_action = None
+            QTimer.singleShot(150, self._on_show_media_analyzer)
+        elif self._pending_post_parse_action == "batch_extract":
+            self._pending_post_parse_action = None
+            QTimer.singleShot(150, lambda: self._on_show_batch_extract_dialog())
 
     def _on_parse_error(self, msg: str):
         self._progress_bar.setVisible(False)

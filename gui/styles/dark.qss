@@ -612,3 +612,28 @@ QPushButton[categoryPill="true"]:checked {
     color: #60a5fa;
     font-weight: 600;
 }
+
+
+/* ---- Welcome Screen ---- */
+#WelcomeScrollArea {
+    background-color: #13151a;
+    border: none;
+}
+#WelcomeScrollArea QWidget {
+    background-color: #13151a;
+}
+.WelcomeCard {
+    background-color: #1c202e;
+    border: 1px solid #2e354d;
+    border-radius: 10px;
+}
+.WelcomeCardPrimary {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #1a2744, stop:1 #1e2130);
+    border: 2px solid #3b82f6;
+    border-radius: 10px;
+}
+#DropZoneCard {
+    background-color: rgba(30, 41, 59, 0.4);
+    border: 2px dashed #3b82f6;
+    border-radius: 10px;
+}

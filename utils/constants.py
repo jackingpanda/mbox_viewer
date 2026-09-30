@@ -11,6 +11,9 @@ ORG_NAME = "MboxViewer"
 APP_AUTHOR = "Dimas Aldrian"
 APP_EMAIL = "mbox@kulam.my.id"
 
+# Default Google Takeout archive path
+DEFAULT_TAKEOUT_PATH = r"D:\secret\M\gmail\Takeout\Mail\All mail Including Spam and Trash.mbox"
+
 # Email list table columns
 EMAIL_COLUMNS = ["#", "From", "Subject", "Date", "Labels", "📎"]
 EMAIL_COL_INDEX = 0
