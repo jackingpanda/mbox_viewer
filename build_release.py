@@ -65,6 +65,8 @@ def main():
         f"--icon={icon_path}",
         f"--add-data=assets{sep}assets",
         f"--add-data=gui/styles{sep}gui/styles",
+        "--hidden-import=core.updater",
+        "--hidden-import=gui.update_dialog",
         "main.py",
     ]
 

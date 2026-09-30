@@ -12,6 +12,11 @@ APP_ID = "DimasAldrian.MboxViewer.TakeoutExplorer.v1"
 APP_AUTHOR = "Dimas Aldrian"
 APP_EMAIL = "mbox@kulam.my.id"
 
+# GitHub repository and update endpoints
+GITHUB_OWNER = "jackingpanda"
+GITHUB_REPO = "jackingpanda/mbox_viewer"
+GITHUB_RELEASES_URL = f"https://api.github.com/repos/{GITHUB_REPO}/releases/latest"
+
 # Default Google Takeout archive path
 DEFAULT_TAKEOUT_PATH = r"D:\secret\M\gmail\Takeout\Mail\All mail Including Spam and Trash.mbox"
 

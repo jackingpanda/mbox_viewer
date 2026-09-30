@@ -279,6 +279,77 @@ for f_clean in (TEST_MBOX, idx_path, f".{TEST_MBOX}.idx", f"{TEST_MBOX}.idx"):
 import shutil
 shutil.rmtree(out_dir, ignore_errors=True)
 
+# -----------------------------------------------------------------------
+# Updater Tests
+# -----------------------------------------------------------------------
+print("=== Updater Tests ===")
+from core.updater import (
+    parse_version,
+    is_newer_version,
+    ReleaseInfo,
+    extract_and_locate_staged_app,
+    create_in_place_updater_script,
+    get_app_target_info,
+)
+import zipfile, tempfile
+
+check("parse_version standard v1.3.0", parse_version("v1.3.0") == (1, 3, 0))
+check("parse_version plain 1.4.1", parse_version("1.4.1") == (1, 4, 1))
+check("parse_version with suffix v2.0.0-rc1", parse_version("v2.0.0-rc1") == (2, 0, 0, 1))
+check("parse_version empty string", parse_version("") == (0, 0, 0))
+check("parse_version single number v2", parse_version("v2") == (2,))
+
+check("is_newer_version minor bump 1.3.0 -> 1.3.1", is_newer_version("1.3.0", "1.3.1") is True)
+check("is_newer_version major bump 1.3.0 -> 2.0.0", is_newer_version("1.3.0", "2.0.0") is True)
+check("is_newer_version same version", is_newer_version("1.3.0", "1.3.0") is False)
+check("is_newer_version older version", is_newer_version("1.3.0", "1.2.9") is False)
+check("is_newer_version handles 'v' prefix", is_newer_version("v1.3.0", "v1.4.0") is True)
+
+# Test ReleaseInfo formatting
+r_info = ReleaseInfo(
+    tag_name="v1.4.0",
+    version_str="1.4.0",
+    title="Release v1.4.0",
+    changelog="Added updater feature",
+    html_url="https://github.com/jackingpanda/mbox_viewer/releases/tag/v1.4.0",
+    published_at="2026-09-30",
+    zip_asset_url="https://example.com/download.zip",
+    zip_asset_name="MBOX_Viewer_v1.4.0_Windows_x64.zip",
+    zip_asset_size=46510190,
+)
+check("ReleaseInfo display_size MB", "44.4 MB" in r_info.display_size)
+check("ReleaseInfo zip_asset_name", r_info.zip_asset_name == "MBOX_Viewer_v1.4.0_Windows_x64.zip")
+
+# Test zip extraction and root locating
+tmp_dir = tempfile.mkdtemp()
+mock_zip = os.path.join(tmp_dir, "mock_update.zip")
+with zipfile.ZipFile(mock_zip, "w") as zf:
+    zf.writestr("MBOX_Viewer/MBOX_Viewer.exe", b"dummy exe")
+    zf.writestr("MBOX_Viewer/README.md", b"dummy readme")
+
+staging_dir = os.path.join(tmp_dir, "staging")
+located_dir = extract_and_locate_staged_app(mock_zip, staging_dir)
+check("extract_and_locate_staged_app finds payload dir", os.path.basename(located_dir) == "MBOX_Viewer")
+check("extract_and_locate_staged_app extracted file exists", os.path.isfile(os.path.join(located_dir, "MBOX_Viewer.exe")))
+
+# Test updater batch script generation
+bat_path = create_in_place_updater_script(located_dir, tmp_dir, sys.executable, os.getpid())
+check("create_in_place_updater_script creates file", os.path.isfile(bat_path))
+with open(bat_path, "r", encoding="utf-8") as f:
+    bat_content = f.read()
+check("updater bat script contains tasklist check", "tasklist /fi \"PID eq" in bat_content)
+check("updater bat script contains robocopy", "robocopy" in bat_content)
+check("updater bat script contains relaunch", "start \"\"" in bat_content)
+
+# Clean up updater test artifacts
+shutil.rmtree(tmp_dir, ignore_errors=True)
+if os.path.exists(bat_path):
+    try:
+        os.remove(bat_path)
+    except Exception:
+        pass
+
+
 if _errors:
     print(f"\033[91m=== {len(_errors)} TESTS FAILED: {_errors} ===\033[0m")
     sys.exit(1)

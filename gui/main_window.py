@@ -182,6 +182,10 @@ class MainWindow(QMainWindow):
 
         # Help
         help_menu = mb.addMenu("&Help")
+        check_update_act = QAction("Check for Updates…", self)
+        check_update_act.triggered.connect(self._on_check_for_updates)
+        help_menu.addAction(check_update_act)
+        help_menu.addSeparator()
         about_act = QAction("About MBOX Viewer", self)
         about_act.triggered.connect(self._on_about)
         help_menu.addAction(about_act)
@@ -1036,6 +1040,12 @@ class MainWindow(QMainWindow):
             QMessageBox.information(self, "No Data", "Open an .mbox file first to see statistics.")
             return
         dlg = StatsDialog(records, self._search_engine, self)
+        dlg.exec()
+
+    def _on_check_for_updates(self):
+        """Open the update dialog and check for new releases."""
+        from gui.update_dialog import UpdateDialog
+        dlg = UpdateDialog(self, auto_check=True)
         dlg.exec()
 
     def _on_about(self):
